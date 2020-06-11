@@ -1,1 +1,0 @@
-# 6-2-20 Checkers project, Jimmy B, overseen by Ray B.
