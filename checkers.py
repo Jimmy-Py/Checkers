@@ -36,7 +36,7 @@ class Square(pygame.sprite.Sprite):
     SQUARE_DIMENSION = 100
 
     def __init__(self, color, x, y, column = None, number = None):
-        super().__init__(self)
+        super().__init__()
         # why do we need to use put "Square" infront of "SQUARE_DIMENSON"? it's inside the same class...
         self.image = pygame.Surface((Square.SQUARE_DIMENSION,Square.SQUARE_DIMENSION))
         self.image.fill(color)
