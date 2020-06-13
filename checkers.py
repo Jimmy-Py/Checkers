@@ -6,7 +6,7 @@ import pygame, sys
 SQUARES_IN_COLUMN = 8
 LEFT_SHIFT = 225
 DOWN_SHIFT = 10
-piece_list = [0 for n in range(0,64)]
+pieces_list = [0 for n in range(0, 64)]
 
 # General Setup
 pygame.init()
@@ -32,6 +32,9 @@ class Square(pygame.sprite.Sprite):
     NUMBERS = ["1","2","3","4","5","6","7","8"]
     SQUARE_DIMENSION = 100
 
+    mouse = pygame.mouse.get_pos()
+    click = pygame.mouse.get_pressed()
+
     def __init__(self, color, x, y, column = None, number = None):
         super().__init__()
         # why do we need to use put "Square" infront of "SQUARE_DIMENSON"? it's inside the same class...
@@ -47,9 +50,10 @@ class Square(pygame.sprite.Sprite):
         return self.name
 
 
-#Sprites
+# Sprites
 square_sprites = pygame.sprite.Group()
 pieces_sprites = pygame.sprite.Group()
+
 
 def make_squares():
     x = LEFT_SHIFT  # draw board away from left edge of display surface.
@@ -79,18 +83,18 @@ def set_initial_piece_position():
     red_pieces = [40,42,44,46,49,51,53,55,56,58,60,62]
 
     for piece in brown_pieces:
-        piece_list[piece] = 1
+        pieces_list[piece] = 1
 
     for piece in red_pieces:
-        piece_list[piece] = 2
+        pieces_list[piece] = 2
 
 
 def attach_pieces():
     piece_counter = 0
     for square in square_sprites:
-        if piece_list[piece_counter] == 1:
+        if pieces_list[piece_counter] == 1:
             pygame.draw.ellipse(screen, BROWN, square)
-        if piece_list[piece_counter] == 2:
+        if pieces_list[piece_counter] == 2:
             pygame.draw.ellipse(screen, RED, square)
         piece_counter += 1
 
