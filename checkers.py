@@ -33,8 +33,6 @@ class Square(pygame.sprite.Sprite):
     NUMBERS = ["1","2","3","4","5","6","7","8"]
     SQUARE_DIMENSION = 100
 
-    mouse = pygame.mouse.get_pos()
-    click = pygame.mouse.get_pressed()
 
     def __init__(self, color, x, y, column = None, number = None):
         super().__init__()
@@ -49,6 +47,12 @@ class Square(pygame.sprite.Sprite):
 
     def __string__(self):
         return self.name
+
+    def update(self):
+        mouse = pygame.mouse.get_pos()
+        click = pygame.mouse.get_pressed()
+        if self.rect.x + Square.SQUARE_DIMENSION > mouse[0] > self.rect.x and self.rect.y + Square.SQUARE_DIMENSION > mouse[1] > self.rect.y:
+            print("It's working! :)")
 
 
 # Sprites
@@ -100,16 +104,6 @@ def attach_pieces():
         piece_counter += 1
 
 
-def square_hover():
-    mouse = pygame.mouse.get_pos()
-    click = pygame.mouse.get_pressed()
-
-    for square in square_sprites:
-        if square.rect.x + Square.SQUARE_DIMENSION > mouse[0] > square.rect.x and square.rect.y + Square.SQUARE_DIMENSION > mouse[1] > square.rect.y:
-           print("It's working!!!!!!!!")
-           # pygame.draw.rect(gameDisplay, ac, (x, y, w, h))
-
-
 # Main
 make_squares()
 set_initial_piece_position()
@@ -123,7 +117,6 @@ while True:
     # Visuals
     screen.fill(LIGHT_GREY)
     square_sprites.update()
-    square_hover()
     square_sprites.draw(screen)
 
     attach_pieces()
