@@ -61,7 +61,7 @@ class Piece(pygame.sprite.Sprite):
 square_sprites = pygame.sprite.Group()
 pieces_sprites = pygame.sprite.Group()
 
-def make_board():
+def make_squares():
     x = LEFT_SHIFT  # draw board away from left edge of display surface.
     y = DOWN_SHIFT
     column_counter = 0
@@ -98,7 +98,7 @@ def attach_pieces():
 
 
 #Main
-make_board()
+make_squares()
 
 while True:
     for event in pygame.event.get():
