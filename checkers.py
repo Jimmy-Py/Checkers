@@ -50,13 +50,6 @@ class Square(pygame.sprite.Sprite):
         return self.name
 
 
-
-class Piece(pygame.sprite.Sprite):
-    def __init__(self,rect):
-        pygame.sprite.Sprite.__init__(self)
-
-
-
 #Sprites
 square_sprites = pygame.sprite.Group()
 pieces_sprites = pygame.sprite.Group()
@@ -82,6 +75,8 @@ def make_squares():
             column_counter = 0
             continue
         color_counter += 1  # make next square a different color
+
+
 
 
 #TODO: make pieces sprites so they can be dragged around the board when a player makes a move,
