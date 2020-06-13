@@ -24,6 +24,7 @@ RED = (255, 0, 0)
 BLACK = (0,0,0)
 WHITE = (255,255,255)
 BROWN = (139,69,19)
+BLUE_DARK = (0,0,255)
 
 
 class Square(pygame.sprite.Sprite):
@@ -99,8 +100,17 @@ def attach_pieces():
         piece_counter += 1
 
 
+def square_hover():
+    mouse = pygame.mouse.get_pos()
+    click = pygame.mouse.get_pressed()
 
-#Main
+    for square in square_sprites:
+        if square.rect.x + Square.SQUARE_DIMENSION > mouse[0] > square.rect.x and square.rect.y + Square.SQUARE_DIMENSION > mouse[1] > square.rect.y:
+           print("It's working!!!!!!!!")
+           # pygame.draw.rect(gameDisplay, ac, (x, y, w, h))
+
+
+# Main
 make_squares()
 set_initial_piece_position()
 
@@ -113,7 +123,9 @@ while True:
     # Visuals
     screen.fill(LIGHT_GREY)
     square_sprites.update()
+    square_hover()
     square_sprites.draw(screen)
+
     attach_pieces()
     #print(piece_list)
 
