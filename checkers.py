@@ -2,14 +2,11 @@
 
 import pygame, sys
 
+# Global Variables
 SQUARES_IN_COLUMN = 8
 LEFT_SHIFT = 225
 DOWN_SHIFT = 10
-
 piece_list = [0 for n in range(0,64)]
-piece_list[0] = 1
-piece_list[1] = 2
-piece_list[2] = 1
 
 # General Setup
 pygame.init()
@@ -76,24 +73,32 @@ def make_squares():
             continue
         color_counter += 1  # make next square a different color
 
+def set_initial_piece_position():
+    brown_pieces = [1,3,5,7,8,12,10,14,17,19,21,23]
+    red_pieces = [40,42,44,46,49,51,53,55,56,58,60,62]
+
+    for piece in brown_pieces:
+        piece_list[piece] = 1
+
+    for piece in red_pieces:
+        piece_list[piece] = 2
 
 
 
-#TODO: make pieces sprites so they can be dragged around the board when a player makes a move,
-# (the other option being for them to select a square, and click the new location.
-# Make circle smaller than dimensions of square.
 def attach_pieces():
     piece_counter = 0
     for square in square_sprites:
         if piece_list[piece_counter] == 1:
-            pygame.draw.ellipse(screen, RED, square)
-        if piece_list[piece_counter] == 2:
             pygame.draw.ellipse(screen, BROWN, square)
+        if piece_list[piece_counter] == 2:
+            pygame.draw.ellipse(screen, RED, square)
         piece_counter += 1
+
 
 
 #Main
 make_squares()
+set_initial_piece_position()
 
 while True:
     for event in pygame.event.get():
