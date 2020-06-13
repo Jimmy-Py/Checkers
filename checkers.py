@@ -42,6 +42,7 @@ class Square(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.x = x
         self.rect.y = y
+        self.color = color
         # self.piece = None
         # self.name = column + number
 
@@ -52,8 +53,9 @@ class Square(pygame.sprite.Sprite):
         mouse = pygame.mouse.get_pos()
         click = pygame.mouse.get_pressed()
         if self.rect.x + Square.SQUARE_DIMENSION > mouse[0] > self.rect.x and self.rect.y + Square.SQUARE_DIMENSION > mouse[1] > self.rect.y:
-            print("It's working! :)")
-
+            self.image.fill(BLUE_DARK)
+        else:
+            self.image.fill(self.color)
 
 # Sprites
 square_sprites = pygame.sprite.Group()
