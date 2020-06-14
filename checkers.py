@@ -133,9 +133,10 @@ def move():
 
     if len(selected_squares) >= 2:
         if selected_squares[0][0] == 1 and selected_squares[1][0] == 0:  # first square has brown piece, other square is open.
-            pieces_list[selected_squares[0][3]][0] = 0  # original square with brown piece is to empty.
+            pieces_list[selected_squares[0][3]][0] = 0  # original square with brown piece is made empty.
             pieces_list[selected_squares[1][3]][0] = 1  # open square now gets brown piece
-            #square_sprites[selected_squares[0][3]].selected = False  # this throws and interesting error.
+            for i in square_sprites:
+                i.selected = False  #
     print(selected_squares)
 
 # Main
