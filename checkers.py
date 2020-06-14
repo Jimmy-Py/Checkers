@@ -121,6 +121,19 @@ def attach_pieces():
         piece_counter += 1
 
 
+def move():
+    selected_squares = []
+    for square in pieces_list:
+        if square[2]:  # Test if Square is selected.
+            selected_squares.append(square)
+
+    if len(selected_squares) >= 2:
+        if selected_squares[0][0] == 1 and selected_squares[1][0] == 0:  # first square has brown piece, other square is open.
+            pieces_list[selected_squares[0][3]][0] = 0  # original square with brown piece is to empty.
+            pieces_list[selected_squares[1][3]][0] = 1  # open square now gets brown piece
+            #square_sprites[selected_squares[0][3]].selected = False  # this throws and interesting error.
+    print(selected_squares)
+
 # Main
 make_squares()
 set_initial_piece_position()
@@ -135,7 +148,7 @@ while True:
     screen.fill(LIGHT_GREY)
     square_sprites.update()
     square_sprites.draw(screen)
-
+    move()
     attach_pieces()
     #print(piece_list)
 
