@@ -6,7 +6,10 @@ import pygame, sys
 SQUARES_IN_COLUMN = 8
 LEFT_SHIFT = 225
 DOWN_SHIFT = 10
-pieces_list = [0 for n in range(0, 64)]
+pieces_list = [[0,0,False] for n in range(0, 64)]
+# first digit is color (0 for empty, 1 for brown, 2 for black).
+# second digit is 0 for foot solider, 1 for king.
+# Third boolean, Fale for unselected-square, True for selected-square.
 
 # General Setup
 pygame.init()
@@ -59,12 +62,15 @@ class Square(pygame.sprite.Sprite):
             self.image.fill(BLUE_DARK)
             if click[0] == 1:
                 self.selected = not self.selected  # toggle boolean value of self.selected
-                print(click)
+                #print(pieces_list[self.number][2])
+                pieces_list[self.number][2] = not pieces_list[self.number][2]  # Toggle boolean of square selection.
+
         else:
             self.image.fill(self.color)
 
         if self.selected:
             self.image.fill(GREEN)
+            print(pieces_list[self.number][2])
 
 # Sprites
 square_sprites = pygame.sprite.Group()
@@ -99,18 +105,18 @@ def set_initial_piece_position():
     red_pieces = [40,42,44,46,49,51,53,55,56,58,60,62]
 
     for piece in brown_pieces:
-        pieces_list[piece] = 1
+        pieces_list[piece][0] = 1
 
     for piece in red_pieces:
-        pieces_list[piece] = 2
+        pieces_list[piece][0] = 2
 
 
 def attach_pieces():
     piece_counter = 0
     for square in square_sprites:
-        if pieces_list[piece_counter] == 1:
+        if pieces_list[piece_counter][0] == 1:
             pygame.draw.ellipse(screen, BROWN, square)
-        if pieces_list[piece_counter] == 2:
+        if pieces_list[piece_counter][0] == 2:
             pygame.draw.ellipse(screen, RED, square)
         piece_counter += 1
 
@@ -135,4 +141,4 @@ while True:
 
 
     pygame.display.update()
-    clock.tick(3)
+    clock.tick(5)
