@@ -25,6 +25,7 @@ BLACK = (0,0,0)
 WHITE = (255,255,255)
 BROWN = (139,69,19)
 BLUE_DARK = (0,0,255)
+GREEN = (0,255,0)
 
 
 class Square(pygame.sprite.Sprite):
@@ -43,6 +44,7 @@ class Square(pygame.sprite.Sprite):
         self.rect.x = x
         self.rect.y = y
         self.color = color
+        self.selected = False
         # self.piece = None
         # self.name = column + number
 
@@ -54,8 +56,14 @@ class Square(pygame.sprite.Sprite):
         click = pygame.mouse.get_pressed()
         if self.rect.x + Square.SQUARE_DIMENSION > mouse[0] > self.rect.x and self.rect.y + Square.SQUARE_DIMENSION > mouse[1] > self.rect.y:
             self.image.fill(BLUE_DARK)
+            if click[0] == 1:
+                self.selected = not self.selected  # toggle boolean value of self.selected
+                print(click)
         else:
             self.image.fill(self.color)
+
+        if self.selected:
+            self.image.fill(GREEN)
 
 # Sprites
 square_sprites = pygame.sprite.Group()
@@ -126,4 +134,4 @@ while True:
 
 
     pygame.display.update()
-    clock.tick(60)
+    clock.tick(3)
