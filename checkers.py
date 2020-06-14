@@ -6,7 +6,11 @@ import pygame, sys
 SQUARES_IN_COLUMN = 8
 LEFT_SHIFT = 225
 DOWN_SHIFT = 10
-pieces_list = [[0,0,False] for n in range(0, 64)]
+pieces_list_counter = 0
+pieces_list = [[0,0,False,0] for n in range(0, 64)]
+for square in pieces_list:
+    square[3] = pieces_list_counter
+    pieces_list_counter += 1
 # first digit is color (0 for empty, 1 for brown, 2 for black).
 # second digit is 0 for foot solider, 1 for king.
 # Third boolean, Fale for unselected-square, True for selected-square.
