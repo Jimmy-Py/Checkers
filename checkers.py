@@ -6,11 +6,7 @@ import pygame, sys
 SQUARES_IN_COLUMN = 8
 LEFT_SHIFT = 225
 DOWN_SHIFT = 10
-pieces_list_counter = 0
-pieces_list = [[0,0,False,0] for n in range(0, 64)]
-for square in pieces_list:
-    square[3] = pieces_list_counter
-    pieces_list_counter += 1
+pieces_list = [[0,0,False,n] for n in range(0, 64)]
 # first digit is color (0 for empty, 1 for brown, 2 for black).
 # second digit is 0 for foot solider, 1 for king.
 # Third boolean, Fale for unselected-square, True for selected-square.
@@ -59,10 +55,15 @@ class Square(pygame.sprite.Sprite):
     def __string__(self):
         return self.name
 
+    def is_in(self,x,y):
+        return self.rect.x + Square.SQUARE_DIMENSION > x > self.rect.x and self.rect.y + Square.SQUARE_DIMENSION > y > self.rect.y
+
+
+
     def update(self):
         mouse = pygame.mouse.get_pos()
         click = pygame.mouse.get_pressed()
-        if self.rect.x + Square.SQUARE_DIMENSION > mouse[0] > self.rect.x and self.rect.y + Square.SQUARE_DIMENSION > mouse[1] > self.rect.y:
+        if self.is_in(*mouse):
             self.image.fill(BLUE_DARK)
             if click[0] == 1:
                 self.selected = not self.selected  # toggle boolean value of self.selected
