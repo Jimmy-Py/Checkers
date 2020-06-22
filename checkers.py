@@ -6,14 +6,14 @@ import pygame, sys
 SQUARES_IN_COLUMN = 8
 LEFT_SHIFT = 225
 DOWN_SHIFT = 10
-pieces_list = [[0,0,False,n] for n in range(0, 64)]
+# pieces_list = [[0, 0, False, n] for n in range(0, 64)]
 # first digit is color (0 for empty, 1 for brown, 2 for black).
 # second digit is 0 for foot solider, 1 for king.
 # Third boolean, Fale for unselected-square, True for selected-square.
 
 # General Setup
 pygame.init()
-clock = pygame.time.Clock()   # clock method stored in the variable "clock"
+clock = pygame.time.Clock()  # clock method stored in the variable "clock"
 
 # Setting up the main window
 screen_width = 1280
@@ -22,60 +22,95 @@ screen = pygame.display.set_mode((screen_width, screen_height))  # returns a dis
 pygame.display.set_caption("Checkers!")
 
 # Colors
-LIGHT_GREY = (200,200,200)
+LIGHT_GREY = (200, 200, 200)
 RED = (255, 0, 0)
-BLACK = (0,0,0)
-WHITE = (255,255,255)
-BROWN = (139,69,19)
-BLUE_DARK = (0,0,255)
-GREEN = (0,255,0)
+BLACK = (0, 0, 0)
+WHITE = (255, 255, 255)
+BROWN = (139, 69, 19)
+BLUE_DARK = (0, 0, 255)
+GREEN = (0, 255, 0)
+
+
+class CheckersGame():
+    def __init__(self):
+        self.state = "Waiting for Player"
+        self.player = "P1"
+
+    def accepting_clicks(self):
+        return self.state != "Game Over."
+
+    def can_move(self, player):
+        return self.player == player  # returns a boolean whether or not a given player can move.
+
+    def change_players(self):
+        if self.player == "P1":
+            self.player = "P2"
+        elif self.player == "P2":
+            self.player = "P1"
+
+
 
 
 class Square(pygame.sprite.Sprite):
-    SQUARE_COLORS = [WHITE,BLACK]
-    COLUMNS = ["a","b","c","d","e","f","g","h"]
-    NUMBERS = ["1","2","3","4","5","6","7","8"]
+    SQUARE_COLORS = [WHITE, BLACK]
+    COLUMNS = ["a", "b", "c", "d", "e", "f", "g", "h"]
+    NUMBERS = ["1", "2", "3", "4", "5", "6", "7", "8"]
     SQUARE_DIMENSION = 100
 
-
-    def __init__(self, color, x, y, number, column = None):
+    def __init__(self, color, x, y, number, column=None):
         super().__init__()
-        # why do we need to use put "Square" infront of "SQUARE_DIMENSON"? it's inside the same class...
-        self.image = pygame.Surface((Square.SQUARE_DIMENSION,Square.SQUARE_DIMENSION))
-        self.image.fill(color)
+        # why do we need to use put "Square" in front of "SQUARE_DIMENSION"? it's inside the same class...
+        self.image = pygame.Surface((self.SQUARE_DIMENSION, self.SQUARE_DIMENSION))
+        #self.image.fill(color)
         self.rect = self.image.get_rect()
         self.rect.x = x
         self.rect.y = y
         self.color = color
-        self.selected = False
+        self.is_selected = False
         self.number = number
-        # self.piece = None
+        self.is_hover = False
+        self.piece = None
         # self.name = column + number
 
     def __string__(self):
         return self.name
 
-    def is_in(self,x,y):
+    def contains_point(self, x, y):
         return self.rect.x + Square.SQUARE_DIMENSION > x > self.rect.x and self.rect.y + Square.SQUARE_DIMENSION > y > self.rect.y
 
+    def draw(self):
+        if self.is_selected:
+            pygame.draw.rect(screen, GREEN, self.rect)
+
+        elif self.is_hover:
+            pygame.draw.rect(screen, BLUE_DARK, self.rect)
+
+        else:
+            pygame.draw.rect(screen, self.color, self.rect)  # square is neither selected nor hovered.
+
+        if self.piece:
+            if self.piece == "BROWN":
+                pygame.draw.ellipse(screen, BROWN, self.rect)
+            if self.piece == "RED":
+                pygame.draw.ellipse(screen, RED, self.rect)
+
+    # def open_neighbor_selected(self):
+    #     if self.is_selected and self.piece:
+    #         for square in square_sprites:
+    #             if square.is_selected and square.piece is None:  # why is this better than " == None" ?
+    #
+    #
+    #     open_neighbors = pygame.sprite.group()
+    #     for square in square_sprites:
+    #         if square.is_selected:
+    #             open_neighbors.add(square)
+    #     # for square in open_neighbors:
+    #     #     if square.number
 
 
     def update(self):
-        mouse = pygame.mouse.get_pos()
-        click = pygame.mouse.get_pressed()
-        if self.is_in(*mouse):
-            self.image.fill(BLUE_DARK)
-            if click[0] == 1:
-                self.selected = not self.selected  # toggle boolean value of self.selected
-                #print(pieces_list[self.number][2])
-                pieces_list[self.number][2] = not pieces_list[self.number][2]  # Toggle boolean of square selection.
+        self.draw()  # am I hover, selected, or original? Am I empty, have BROWN, or RED piece?
 
-        else:
-            self.image.fill(self.color)
-
-        if self.selected:
-            self.image.fill(GREEN)
-            print(pieces_list[self.number][2])
 
 # Sprites
 square_sprites = pygame.sprite.Group()
@@ -86,14 +121,13 @@ def make_squares():
     x = LEFT_SHIFT  # draw board away from left edge of display surface.
     y = DOWN_SHIFT
     column_counter = 0
-    c = 0
     color_counter = 0
-    for square in range(0,64):
+    for square in range(0, 64):
         if color_counter % 2 != 0:  # color_counter is odd
             c = 1  # make next square black.
         else:
             c = 0  # make next square white.
-        square_sprites.add(Square(Square.SQUARE_COLORS[c],x,y,square))
+        square_sprites.add(Square(Square.SQUARE_COLORS[c], x, y, square))
         x += Square.SQUARE_DIMENSION
         column_counter += 1
 
@@ -106,61 +140,76 @@ def make_squares():
 
 
 def set_initial_piece_position():
-    brown_pieces = [1,3,5,7,8,12,10,14,17,19,21,23]
-    red_pieces = [40,42,44,46,49,51,53,55,56,58,60,62]
+    brown_pieces = [1, 3, 5, 7, 8, 12, 10, 14, 17, 19, 21, 23]
+    red_pieces = [40, 42, 44, 46, 49, 51, 53, 55, 56, 58, 60, 62]
 
-    for piece in brown_pieces:
-        pieces_list[piece][0] = 1
-
-    for piece in red_pieces:
-        pieces_list[piece][0] = 2
-
-
-def attach_pieces():
-    piece_counter = 0
     for square in square_sprites:
-        if pieces_list[piece_counter][0] == 1:
-            pygame.draw.ellipse(screen, BROWN, square)
-        if pieces_list[piece_counter][0] == 2:
-            pygame.draw.ellipse(screen, RED, square)
-        piece_counter += 1
+        if square.number in brown_pieces:
+            square.piece = "BROWN"
 
+    for square in square_sprites:
+        if square.number in red_pieces:
+            square.piece = "RED"
 
-def move():
-    selected_squares = []
-    for square in pieces_list:
-        if square[2]:  # Test if Square is selected.
-            selected_squares.append(square)
-
-    if len(selected_squares) >= 2:
-        if selected_squares[0][0] == 1 and selected_squares[1][0] == 0:  # first square has brown piece, other square is open.
-            pieces_list[selected_squares[0][3]][0] = 0  # original square with brown piece is made empty.
-            pieces_list[selected_squares[1][3]][0] = 1  # open square now gets brown piece
-            pieces_list[selected_squares[0][3]][2] = False  # original square is unselected
-            pieces_list[selected_squares[1][3]][2] = False # new square is unselected
-            for i in square_sprites:
-                i.selected = False
-
-    print(selected_squares)
 
 # Main
+Game = CheckersGame()
 make_squares()
 set_initial_piece_position()
 
+
 while True:
+    print(Game.state, Game.player)
     for event in pygame.event.get():
+        mouse = pygame.mouse.get_pos()
         if event.type == pygame.QUIT:
             pygame.quit()
             sys.exit()
 
+        # Upon user click, see if mouse is in any square. "Select" square where mouse is and "unselect" previously
+        # selected square.
+        if event.type == pygame.MOUSEBUTTONDOWN:
+            for square in square_sprites:
+                if square.contains_point(*mouse):
+
+                    if Game.state == "Partial Select" and square.piece is None:  # why is this better than " == None" ?
+
+                        # Gives piece to new square.
+                        # Maybe we should just use "RED" and "BROWN" instead of P1 and P2?
+                        if Game.player == "P1":
+                            square.piece = "RED"
+                        if Game.player == "P2":
+                            square.piece = "BROWN"
+
+                        for i in square_sprites:  # is there a better name choice here than using "i"?
+                            if i.is_selected:
+                                i.piece = None  # remove piece from old square
+                                i.is_selected = False  # unselect old square.
+                        Game.state = "Waiting for Player"
+                        Game.change_players()
+
+                    # Player selects square they have already selected for first choice in "Partial Select"
+                    elif Game.state == "Partial Select" and square.is_selected:
+                        square.is_selected = False
+                        Game.state = "Waiting for Player"
+                    else:
+                        square.is_selected = True
+                        Game.state = "Partial Select"
+
+        # Mouse Hover turns Square Blue (unless square is already selected).
+        for square in square_sprites:
+            if square.contains_point(*mouse):
+                square.is_hover = True
+            else:
+                square.is_hover = False
+
+        for square in square_sprites:
+            if square.is_selected:
+                Game.state = "Partial Select"
+
+#TODO add a display for user to see who's turn it is.
     # Visuals
     screen.fill(LIGHT_GREY)
-    move()
     square_sprites.update()
-    square_sprites.draw(screen)
-    attach_pieces()
-    #print(piece_list)
-
-
     pygame.display.update()
     clock.tick(5)
