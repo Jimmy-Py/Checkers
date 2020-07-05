@@ -5,6 +5,7 @@ from constants import Color
 # Local Constants
 LOOP_ITERATIONS_PER_SECOND = 5
 
+
 class CheckersGame():
     WAITING = "Waiting for Player"
     OVER = "Game Over"
