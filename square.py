@@ -1,6 +1,6 @@
 import pygame
-
 from constants import Color
+
 
 class Square(pygame.sprite.Sprite):
     SQUARE_COLORS = [Color.WHITE, Color.BLACK]
@@ -50,7 +50,6 @@ class Square(pygame.sprite.Sprite):
 
         if self.piece:
             pygame.draw.ellipse(self.screen, self.piece, self.rect)
-
 
     def legal_move(self, new_square, player):
         if self.can_move_up:
