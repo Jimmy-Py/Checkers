@@ -1,6 +1,6 @@
 import pygame
 from pygame.locals import K_r
-from constants import Color
+from .constants import Color
 
 # Local Constants
 LOOP_ITERATIONS_PER_SECOND = 5
