@@ -1,5 +1,5 @@
-from checkers.square import Square
-from checkers.constants import Color
+from square import Square
+from constants import Color
 
 def test_square_has_valid_defaults():
     square = Square(Color.WHITE, x=0, y=0, square_number=0, screen=None)

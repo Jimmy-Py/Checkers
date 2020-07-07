@@ -1,7 +1,9 @@
+# 6-2-20 Checkers project, Jimmy B, overseen by Ray B.
+
 import pygame
-from .game import CheckersGame
-from .square import Square
-from .constants import Color
+from checkers_game import CheckersGame
+from square import Square
+from constants import Color
 
 # Global Variables
 NUMBER_OF_ROWS = 8
@@ -65,6 +67,7 @@ def main():
         return "Restart"
     print(should_restart)
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     while main() == "Restart":
         pass

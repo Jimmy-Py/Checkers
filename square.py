@@ -1,5 +1,5 @@
 import pygame
-from .constants import Color
+from constants import Color
 
 
 class Square(pygame.sprite.Sprite):
