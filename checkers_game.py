@@ -11,12 +11,16 @@ class CheckersGame():
     OVER = "Game Over"
     PARTIAL_SELECT = "Partial Select"
 
+
     def __init__(self, square_sprites):
+        self.font = pygame.font.Font("freesansbold.ttf", 20)  # this has to come after pygame is initialized.
         self.state = self.WAITING
         self.player = Color.RED
         self.message = "Red's Turn"
         self.square_sprites = square_sprites
         self.previously_selected = None
+        self._temporary_message_timer = 0
+        self._temporary_message = None
 
     def accepting_clicks(self):
         return self.state != self.OVER
@@ -27,12 +31,24 @@ class CheckersGame():
     def change_players(self):
         if self.player == Color.RED:
             self.player = Color.BROWN
+            self.message = "Brown's Turn"
         elif self.player == Color.BROWN:
             self.player = Color.RED
+            self.message = "Red's Turn"
 
-    def communication_window(self, message):
-        pass
-        #textSurface = font.render(text, True, black)
+    def temporary_message(self, message):
+        self._temporary_message = message
+        self._temporary_message_timer = 4
+
+    def communication_window(self, message, screen):
+        if self._temporary_message_timer > 0:
+            message = self._temporary_message
+            self._temporary_message_timer -= 1
+        square_length = self.square_sprites.sprites()[0].SQUARE_SIDE_LENGTH
+        y_pos = square_length * 8 + 50
+        text = self.font.render(message, True, Color.BLACK, Color.WHITE)
+        rect = text.get_rect(centerx=(square_length * 12.5)/2, top=y_pos)
+        screen.blit(text, rect)
 
     def run(self, screen):
         clock = pygame.time.Clock()  # clock method stored in the variable "clock"
@@ -63,7 +79,7 @@ class CheckersGame():
             # TODO add a display for user to see who's turn it is.
             # Visuals
             screen.fill(Color.LIGHT_GREY)
-            self.communication_window("test")
+            self.communication_window(self.message, screen)
             self.square_sprites.update()
             pygame.display.update()
             clock.tick(LOOP_ITERATIONS_PER_SECOND)
@@ -81,6 +97,8 @@ class CheckersGame():
                         self.previously_selected.piece = None
                         self.previously_selected = None
 
+                    else:
+                        self.temporary_message("Illegal Move!")
 
                 # User selects square they have already selected for first choice in "Partial Select"
                 elif self.state == self.PARTIAL_SELECT and square.is_selected:

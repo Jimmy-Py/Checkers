@@ -11,7 +11,7 @@ NUMBER_OF_COLUMNS = 8
 HORIZONTAL_BUFFER = int(Square.SQUARE_SIDE_LENGTH * 2.25)
 VERTICAL_BUFFER = int(Square.SQUARE_SIDE_LENGTH / 10)
 SCREEN_WIDTH = Square.SQUARE_SIDE_LENGTH * NUMBER_OF_COLUMNS + 2 * HORIZONTAL_BUFFER
-SCREEN_HEIGHT = Square.SQUARE_SIDE_LENGTH * NUMBER_OF_ROWS + 2 * VERTICAL_BUFFER
+SCREEN_HEIGHT = Square.SQUARE_SIDE_LENGTH * NUMBER_OF_ROWS + 2 * VERTICAL_BUFFER + 100
 
 
 def make_squares(screen):
@@ -53,7 +53,6 @@ def make_squares(screen):
 def main():
     # General Setup
     pygame.init()
-    smallText = pygame.font.Font("freesansbold.ttf", 20) # this has to come after pygame is initialized.
 
     # Setting up the main window
     screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))  # returns a display-surface object
