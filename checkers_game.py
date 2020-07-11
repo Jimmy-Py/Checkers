@@ -1,6 +1,7 @@
 import pygame
 from pygame.locals import K_r
 from constants import Color
+import sounds
 
 # Local Constants
 LOOP_ITERATIONS_PER_SECOND = 5
@@ -10,14 +11,15 @@ class CheckersGame():
     WAITING = "Waiting for Player"
     OVER = "Game Over"
     PARTIAL_SELECT = "Partial Select"
-    #breakpoint()
-    # normal_move_sound = pygame.mixer.Sound("normal_move.wav")
-    # illegal_move_sound = pygame.mixer.Sound("illegal_move.wav")
+    SOUND_FILE_LOCATION = "..\sounds"
 
     def __init__(self, square_sprites):
-        self.normal_move_sound = pygame.mixer.Sound("normal_move.wav")
-        self.illegal_move_sound = pygame.mixer.Sound("illegal_move.wav")
-        self.font = pygame.font.Font("freesansbold.ttf", 20)  # this has to come after pygame is initialized.
+        self.sound_enabled = True
+        self.unselection_sound = pygame.mixer.Sound("sounds\\unselect.wav")
+        self.selection_sound = pygame.mixer.Sound("sounds\\select.wav")
+        self.normal_move_sound = pygame.mixer.Sound("sounds\\normal_move.wav")
+        self.illegal_move_sound = pygame.mixer.Sound("sounds\\illegal_move.wav")
+        self.font = pygame.font.Font("freesansbold.ttf", 20)
         self.state = self.WAITING
         self.player = Color.RED
         self.message = "Red's Turn"
@@ -27,7 +29,9 @@ class CheckersGame():
         self._temporary_message = None
 
     def play_sound(self, sound):
-        pygame.mixer.Sound.play(sound)  # the sounds variables are found at the top of the class definition.
+        if self.sound_enabled:
+            pygame.mixer.Sound.play(sound)  # the sounds variables are found in the init() of the class.
+
 
     def accepting_clicks(self):
         return self.state != self.OVER
@@ -103,6 +107,7 @@ class CheckersGame():
                         self.previously_selected.is_selected = False
                         self.previously_selected.piece = None
                         self.previously_selected = None
+                        self.play_sound(self.normal_move_sound)
 
                     else:
                         self.temporary_message("Illegal Move!")
@@ -112,12 +117,14 @@ class CheckersGame():
                 elif self.state == self.PARTIAL_SELECT and square.is_selected:
                     square.is_selected = False  # unselect original square.
                     self.state = "Waiting for Player"
+                    self.play_sound(self.unselection_sound)
 
                 # State is "Waiting for Player" and player selects a square with a piece (in order to move it).
                 elif square.piece == self.player and self.state == self.WAITING:
                     square.is_selected = True
                     self.state = self.PARTIAL_SELECT
                     self.previously_selected = square
+                    self.play_sound(self.selection_sound)
 
                 else:
                     pass

@@ -57,10 +57,6 @@ def main():
     screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))  # returns a display-surface object
     pygame.display.set_caption("Checkers!")
 
-    # sounds
-    normal_move_sound = pygame.mixer.Sound("normal_move.wav")
-    illegal_move_sound = pygame.mixer.Sound("illegal_move.wav")
-
     squares = make_squares(screen)
     game = CheckersGame(squares)
     should_restart = game.run(screen)
