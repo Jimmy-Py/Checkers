@@ -11,11 +11,10 @@ class CheckersGame():
     WAITING = "Waiting for Player"
     OVER = "Game Over"
     PARTIAL_SELECT = "Partial Select"
-    SOUND_FILE_LOCATION = "..\sounds"
 
     def __init__(self, square_sprites):
         self.sound_enabled = True
-        self.unselection_sound = pygame.mixer.Sound("sounds\\unselect.wav")
+        self.unselection_sound = pygame.mixer.Sound("\\sounds\\unselect.wav")
         self.selection_sound = pygame.mixer.Sound("sounds\\select.wav")
         self.normal_move_sound = pygame.mixer.Sound("sounds\\normal_move.wav")
         self.illegal_move_sound = pygame.mixer.Sound("sounds\\illegal_move.wav")
