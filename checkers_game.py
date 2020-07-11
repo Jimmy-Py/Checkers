@@ -10,9 +10,13 @@ class CheckersGame():
     WAITING = "Waiting for Player"
     OVER = "Game Over"
     PARTIAL_SELECT = "Partial Select"
-
+    #breakpoint()
+    # normal_move_sound = pygame.mixer.Sound("normal_move.wav")
+    # illegal_move_sound = pygame.mixer.Sound("illegal_move.wav")
 
     def __init__(self, square_sprites):
+        self.normal_move_sound = pygame.mixer.Sound("normal_move.wav")
+        self.illegal_move_sound = pygame.mixer.Sound("illegal_move.wav")
         self.font = pygame.font.Font("freesansbold.ttf", 20)  # this has to come after pygame is initialized.
         self.state = self.WAITING
         self.player = Color.RED
@@ -21,6 +25,9 @@ class CheckersGame():
         self.previously_selected = None
         self._temporary_message_timer = 0
         self._temporary_message = None
+
+    def play_sound(self, sound):
+        pygame.mixer.Sound.play(sound)  # the sounds variables are found at the top of the class definition.
 
     def accepting_clicks(self):
         return self.state != self.OVER
@@ -57,7 +64,7 @@ class CheckersGame():
             for event in pygame.event.get():
                 mouse = pygame.mouse.get_pos()
                 if event.type == pygame.QUIT:
-                    self.square_sprites = None
+                    self.square_sprites = None  # I commented this line out, and the program still shutdown correctly without it. Does it server some other purpose?
                     return False
                 elif event.type == pygame.KEYDOWN:
                     if event.key == K_r:
@@ -99,6 +106,7 @@ class CheckersGame():
 
                     else:
                         self.temporary_message("Illegal Move!")
+                        self.play_sound(self.illegal_move_sound)
 
                 # User selects square they have already selected for first choice in "Partial Select"
                 elif self.state == self.PARTIAL_SELECT and square.is_selected:

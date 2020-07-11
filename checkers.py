@@ -13,7 +13,6 @@ VERTICAL_BUFFER = int(Square.SQUARE_SIDE_LENGTH / 10)
 SCREEN_WIDTH = Square.SQUARE_SIDE_LENGTH * NUMBER_OF_COLUMNS + 2 * HORIZONTAL_BUFFER
 SCREEN_HEIGHT = Square.SQUARE_SIDE_LENGTH * NUMBER_OF_ROWS + 2 * VERTICAL_BUFFER + 100
 
-
 def make_squares(screen):
     square_sprites = pygame.sprite.Group()
     x = HORIZONTAL_BUFFER  # draw board away from left edge of display surface.
@@ -57,6 +56,10 @@ def main():
     # Setting up the main window
     screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))  # returns a display-surface object
     pygame.display.set_caption("Checkers!")
+
+    # sounds
+    normal_move_sound = pygame.mixer.Sound("normal_move.wav")
+    illegal_move_sound = pygame.mixer.Sound("illegal_move.wav")
 
     squares = make_squares(screen)
     game = CheckersGame(squares)
