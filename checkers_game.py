@@ -103,7 +103,7 @@ class CheckersGame():
         for square in self.square_sprites:
             if square.contains_point(mouse_x, mouse_y):
                 if self.state == self.PARTIAL_SELECT and square.piece is None:  # User selects an open square, in state "Partial Select". # why is this better than " == None" ?
-                    if self.previously_selected.legal_move(square, self.player):
+                    if self.previously_selected.legal_move(square, self.player, self.square_sprites):
                         # Give piece to new square.
                         square.piece = self.player
                         self.state = self.WAITING
@@ -129,7 +129,3 @@ class CheckersGame():
                     self.state = self.PARTIAL_SELECT
                     self.previously_selected = square
                     self.play_sound(self.selection_sound)
-
-                else:
-                    pass
-                    # TODO Display message "Please select a (brown or red) piece based on whose turn it is."

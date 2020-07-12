@@ -51,12 +51,19 @@ class Square(pygame.sprite.Sprite):
         if self.piece:
             pygame.draw.ellipse(self.screen, self.piece, self.rect)
 
-    def legal_move(self, new_square, player):
+    def legal_move(self, new_square, player, square_sprites):
         if self.can_move_up:
             if new_square.number == self.number - 7 or new_square.number == self.number - 9:
                 print("True, Legal!", "new:", new_square.number, "previous:", self.number)
                 print(self.number - 7)
                 return True
+            # Jumping
+            elif new_square.number == self.number - 14 and square_sprites[self.number - 7].piece is None:
+                return True
+
+            elif new_square.number == self.number - 18 and square_sprites[self.number - 9].piece is None:
+                return True
+
             else:
                 print("False, Illegal!", "new:", new_square.number, "previous:", self.number)
                 print(self.number - 7)
