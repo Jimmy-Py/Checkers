@@ -31,7 +31,6 @@ class CheckersGame():
         if self.sound_enabled:
             pygame.mixer.Sound.play(sound)  # the sounds variables are found in the init() of the class.
 
-
     def accepting_clicks(self):
         return self.state != self.OVER
 
