@@ -1,5 +1,5 @@
 import pygame
-from pygame.locals import K_r
+from pygame.locals import K_r, K_m
 from constants import Color
 import sounds
 
@@ -72,6 +72,13 @@ class CheckersGame():
                     if event.key == K_r:
                         self.square_sprites = None
                         return True
+                    if event.key == K_m:  # mute sound effects
+                        self.sound_enabled = not self.sound_enabled
+                        if self.sound_enabled:
+                            self.temporary_message("Sound Enabled")
+                        else:
+                            self.temporary_message("Sound Muted")
+
 
                 # Upon user click, see if mouse is in any square. "Select" square where mouse is and "unselect"
                 # previously selected square.
@@ -85,7 +92,6 @@ class CheckersGame():
                     else:
                         square.is_hover = False
 
-            # TODO add a display for user to see who's turn it is.
             # Visuals
             screen.fill(Color.LIGHT_GREY)
             self.communication_window(self.message, screen)
