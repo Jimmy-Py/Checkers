@@ -68,16 +68,21 @@ class Square(pygame.sprite.Sprite):
                 print("False, Illegal!", "new:", new_square.number, "previous:", self.number)
                 return False
 
-        if self.can_move_down:
+        elif self.can_move_down:
             if new_square.number == self.number + 7 or new_square.number == self.number + 9:
                 print("True, Legal!", "new:", new_square.number, "previous:", self.number)
                 print(self.number - 7)
                 return True
+
+            elif new_square.number == self.number + 14 and square_sprites.sprites()[self.number + 7].piece != self.color:
+                return True
+
+            elif new_square.number == self.number + 18 and square_sprites.sprites()[self.number + 9].piece != self.color:
+                return True
+
             else:
                 print("False, Illegal!", "new:", new_square.number, "previous:", self.number)
                 return False
-
-        return False
 
     def update(self):
         self.draw()  # am I hover, selected, or original? Am I empty, have BROWN, or RED piece?
