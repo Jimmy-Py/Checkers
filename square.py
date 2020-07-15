@@ -15,11 +15,12 @@ class Square(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.x = x
         self.rect.y = y
-        self.color = color
+        self.color = color # is either black or white (this is the color of the square, not the piece).
         self.is_selected = False
         self.number = square_number
         self.is_hover = False
         self.piece = None  # can become either Color.RED or Color.BROWN
+        self.is_king = False
 
     def __str__(self):
         return self.name

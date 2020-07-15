@@ -108,10 +108,13 @@ class CheckersGame():
                         square.piece = self.player
                         self.state = self.WAITING
                         self.change_players()
+                        # if self.previously_selected.is_capture():
+                        #     pass
                         self.previously_selected.is_selected = False
                         self.previously_selected.piece = None
                         self.previously_selected = None
                         self.play_sound(self.normal_move_sound)
+
 
                     else:
                         self.temporary_message("Illegal Move!")
