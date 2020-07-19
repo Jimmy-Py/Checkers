@@ -138,12 +138,15 @@ class CheckersGame():
                         new_selection.piece = self.player
                         if self.is_capture(self.previous_selection, new_selection):
                             self.remove_capture(self.previous_selection, new_selection, self.square_sprites)
+                            # self.play_sound(self.capture_sound)
+                        # if not self.is capture:
+                            # self.play_sound(self.normal_move_sound)
+                        self.play_sound(self.normal_move_sound)
                         self.state = self.WAITING
                         self.change_players()
                         self.previous_selection.is_selected = False
                         self.previous_selection.piece = None
                         self.previous_selection = None
-                        self.play_sound(self.normal_move_sound)
 
                     else:
                         self.temporary_message("Illegal Move!")
