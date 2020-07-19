@@ -100,17 +100,34 @@ class CheckersGame():
             clock.tick(LOOP_ITERATIONS_PER_SECOND)
 
     def is_capture(self, previous_selection, new_selection):
+        # Jumping Up
         if new_selection.number == previous_selection.number - 14:
             return True
-        if new_selection.number == previous_selection.number - 18:
+
+        elif new_selection.number == previous_selection.number - 18:
+            return True
+
+        # Jumping Down
+        elif new_selection.number == previous_selection.number + 14:
+            return True
+
+        elif new_selection.number == previous_selection.number + 18:
             return True
 
     def remove_capture(self, previous_selection, new_selection, square_sprites):
+        # Jumping Up
         if new_selection.number == previous_selection.number - 14:
             square_sprites.sprites()[previous_selection.number - 7].piece = None
 
         elif new_selection.number == previous_selection.number - 18:
             square_sprites.sprites()[previous_selection.number - 9].piece = None
+
+        # Jumping Down
+        elif new_selection.number == previous_selection.number + 14:
+            square_sprites.sprites()[previous_selection.number + 7].piece = None
+
+        elif new_selection.number == previous_selection.number + 18:
+            square_sprites.sprites()[previous_selection.number + 9].piece = None
 
     def handle_click(self, mouse_x, mouse_y):
         for new_selection in self.square_sprites:
