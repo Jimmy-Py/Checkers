@@ -14,6 +14,7 @@ class CheckersGame():
 
     def __init__(self, square_sprites):
         self.sound_enabled = True
+        self.capture_sound = pygame.mixer.Sound("sounds\\capture.wav")
         self.unselection_sound = pygame.mixer.Sound("sounds\\unselect.wav")
         self.selection_sound = pygame.mixer.Sound("sounds\\select.wav")
         self.normal_move_sound = pygame.mixer.Sound("sounds\\normal_move.wav")
@@ -138,9 +139,7 @@ class CheckersGame():
                         new_selection.piece = self.player
                         if self.is_capture(self.previous_selection, new_selection):
                             self.remove_capture(self.previous_selection, new_selection, self.square_sprites)
-                            # self.play_sound(self.capture_sound)
-                        # if not self.is capture:
-                            # self.play_sound(self.normal_move_sound)
+                            self.play_sound(self.capture_sound)
                         self.play_sound(self.normal_move_sound)
                         self.state = self.WAITING
                         self.change_players()
