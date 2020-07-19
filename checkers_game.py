@@ -137,7 +137,6 @@ class CheckersGame():
                         # Give piece to new square.
                         new_selection.piece = self.player
                         if self.is_capture(self.previous_selection, new_selection):
-                            print("capture occurred")
                             self.remove_capture(self.previous_selection, new_selection, self.square_sprites)
                         self.state = self.WAITING
                         self.change_players()
