@@ -146,6 +146,7 @@ class CheckersGame():
                         self.previous_selection.is_selected = False
                         self.previous_selection.piece = None
                         self.previous_selection = None
+                        self.play_sound(self.normal_move_sound)
 
                     else:
                         self.temporary_message("Illegal Move!")
