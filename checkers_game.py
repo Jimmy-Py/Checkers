@@ -134,7 +134,7 @@ class CheckersGame():
         for new_selection in self.square_sprites:
             if new_selection.contains_point(mouse_x, mouse_y):
                 if self.state == self.PARTIAL_SELECT and new_selection.piece is None:  # User selects an open square, in state "Partial Select". # why is this better than " == None" ?
-                    if self.previous_selection.legal_move(new_selection, self.player, self.square_sprites)
+                    if self.previous_selection.legal_move(new_selection, self.player, self.square_sprites):
                         # Give piece to new square.
                         new_selection.piece = self.player
                         if self.is_capture(self.previous_selection, new_selection):
