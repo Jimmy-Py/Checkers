@@ -14,6 +14,7 @@ class CheckersGame():
 
     def __init__(self, square_sprites):
         self.sound_enabled = True
+        self.capture_sound = pygame.mixer.Sound("sounds\\capture.wav")
         self.unselection_sound = pygame.mixer.Sound("sounds\\unselect.wav")
         self.selection_sound = pygame.mixer.Sound("sounds\\select.wav")
         self.normal_move_sound = pygame.mixer.Sound("sounds\\normal_move.wav")
@@ -23,7 +24,7 @@ class CheckersGame():
         self.player = Color.RED
         self.message = "Red's Turn"
         self.square_sprites = square_sprites
-        self.previously_selected = None
+        self.previous_selection = None
         self._temporary_message_timer = 0
         self._temporary_message = None
 
@@ -99,37 +100,66 @@ class CheckersGame():
             pygame.display.update()
             clock.tick(LOOP_ITERATIONS_PER_SECOND)
 
+    def is_capture(self, previous_selection, new_selection):
+        # Jumping Up
+        if new_selection.number == previous_selection.number - 14:
+            return True
+
+        elif new_selection.number == previous_selection.number - 18:
+            return True
+
+        # Jumping Down
+        elif new_selection.number == previous_selection.number + 14:
+            return True
+
+        elif new_selection.number == previous_selection.number + 18:
+            return True
+
+    def remove_capture(self, previous_selection, new_selection, square_sprites):
+        # Jumping Up
+        if new_selection.number == previous_selection.number - 14:
+            square_sprites.sprites()[previous_selection.number - 7].piece = None
+
+        elif new_selection.number == previous_selection.number - 18:
+            square_sprites.sprites()[previous_selection.number - 9].piece = None
+
+        # Jumping Down
+        elif new_selection.number == previous_selection.number + 14:
+            square_sprites.sprites()[previous_selection.number + 7].piece = None
+
+        elif new_selection.number == previous_selection.number + 18:
+            square_sprites.sprites()[previous_selection.number + 9].piece = None
+
     def handle_click(self, mouse_x, mouse_y):
-        for square in self.square_sprites:
-            if square.contains_point(mouse_x, mouse_y):
-                if self.state == self.PARTIAL_SELECT and square.piece is None:  # User selects an open square, in state "Partial Select". # why is this better than " == None" ?
-                    if self.previously_selected.legal_move(square, self.player):
+        for new_selection in self.square_sprites:
+            if new_selection.contains_point(mouse_x, mouse_y):
+                if self.state == self.PARTIAL_SELECT and new_selection.piece is None:  # User selects an open square, in state "Partial Select". # why is this better than " == None" ?
+                    if self.previous_selection.legal_move(new_selection, self.player, self.square_sprites):
                         # Give piece to new square.
-                        square.piece = self.player
+                        new_selection.piece = self.player
+                        if self.is_capture(self.previous_selection, new_selection):
+                            self.remove_capture(self.previous_selection, new_selection, self.square_sprites)
+                            self.play_sound(self.capture_sound)
+                        self.play_sound(self.normal_move_sound)
                         self.state = self.WAITING
                         self.change_players()
-                        self.previously_selected.is_selected = False
-                        self.previously_selected.piece = None
-                        self.previously_selected = None
-                        self.play_sound(self.normal_move_sound)
+                        self.previous_selection.is_selected = False
+                        self.previous_selection.piece = None
+                        self.previous_selection = None
 
                     else:
                         self.temporary_message("Illegal Move!")
                         self.play_sound(self.illegal_move_sound)
 
                 # User selects square they have already selected for first choice in "Partial Select"
-                elif self.state == self.PARTIAL_SELECT and square.is_selected:
-                    square.is_selected = False  # unselect original square.
+                elif self.state == self.PARTIAL_SELECT and new_selection.is_selected:
+                    new_selection.is_selected = False  # unselect original square.
                     self.state = "Waiting for Player"
                     self.play_sound(self.unselection_sound)
 
                 # State is "Waiting for Player" and player selects a square with a piece (in order to move it).
-                elif square.piece == self.player and self.state == self.WAITING:
-                    square.is_selected = True
+                elif new_selection.piece == self.player and self.state == self.WAITING:
+                    new_selection.is_selected = True
                     self.state = self.PARTIAL_SELECT
-                    self.previously_selected = square
+                    self.previous_selection = new_selection
                     self.play_sound(self.selection_sound)
-
-                else:
-                    pass
-                    # TODO Display message "Please select a (brown or red) piece based on whose turn it is."
