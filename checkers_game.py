@@ -11,7 +11,8 @@ class CheckersGame():
     WAITING = "Waiting for Player"
     OVER = "Game Over"
     PARTIAL_SELECT = "Partial Select"
-    KING_PROMOTION_SQUARES = [1, 3, 5, 7, 56, 58, 60, 62]
+    TOP_KING_PROMOTION_SQUARES = [1, 3, 5, 7]
+    BOTTOM_KING_PROMOTION_SQUARES = [56, 58, 60, 62]
 
     def __init__(self, square_sprites):
         self.sound_enabled = True
@@ -60,7 +61,6 @@ class CheckersGame():
         text = self.font.render(message, True, Color.BLACK, Color.WHITE)
         rect = text.get_rect(centerx=(square_length * 12.5)/2, top=y_pos)
         screen.blit(text, rect)
-
 
     def is_capture(self, previous_selection, new_selection):
         # Jumping Up
@@ -125,12 +125,12 @@ class CheckersGame():
             print("False, Illegal!", "new:", new_selection.number, "previous:", previous_selection.number)
             return False
 
-    def make_king(self, previous_selection):
-        if previous_selection.piece == Color.RED and previous_selection.number in self.KING_PROMOTION_SQUARES:
+    def make_king(self, previous_selection, new_selection):
+        if previous_selection.piece == Color.RED and new_selection.number in self.TOP_KING_PROMOTION_SQUARES:
             previous_selection.is_king = True
             print("Congratulations, you're a king!")
 
-        if previous_selection.piece == Color.BROWN and previous_selection.number in self.KING_PROMOTION_SQUARES:
+        if previous_selection.piece == Color.BROWN and new_selection.number in self.BOTTOM_KING_PROMOTION_SQUARES:
             previous_selection.is_king = True
             print("Congratulations, you're a king!")
 
@@ -144,7 +144,8 @@ class CheckersGame():
                         if self.is_capture(self.previous_selection, new_selection):
                             self.remove_capture(self.previous_selection, new_selection, self.square_sprites)
                             self.play_sound(self.capture_sound)
-                        self.make_king(new_selection)
+                        self.make_king(self.previous_selection, new_selection)
+                        new_selection.is_king = self.previous_selection.is_king
                         self.play_sound(self.normal_move_sound)
                         self.state = self.WAITING
                         self.change_players()
