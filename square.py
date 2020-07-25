@@ -56,5 +56,12 @@ class Square(pygame.sprite.Sprite):
         if self.piece:
             pygame.draw.ellipse(self.screen, self.piece, self.rect)
 
+        if self.is_king:
+            pygame.draw.line(self.screen, Color.BLACK,
+                             (self.rect.centerx, self.rect.top), (self.rect.centerx, self.rect.bottom), 2)
+            pygame.draw.line(self.screen, Color.BLACK,
+                             (self.rect.left, self.rect.centery), (self.rect.right, self.rect.centery), 2)
+
+
     def update(self):
         self.draw()  # am I hover, selected, or original? Am I empty, have BROWN, or RED piece?
