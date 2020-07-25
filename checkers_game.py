@@ -11,7 +11,7 @@ class CheckersGame():
     WAITING = "Waiting for Player"
     OVER = "Game Over"
     PARTIAL_SELECT = "Partial Select"
-    KING_PROMOTION_SQUARES = [0, 2, 4, 6, 57, 59, 63]
+    KING_PROMOTION_SQUARES = [1, 3, 5, 7, 56, 58, 60, 62]
 
     def __init__(self, square_sprites):
         self.sound_enabled = True
@@ -61,45 +61,6 @@ class CheckersGame():
         rect = text.get_rect(centerx=(square_length * 12.5)/2, top=y_pos)
         screen.blit(text, rect)
 
-    def run(self, screen):
-        clock = pygame.time.Clock()  # clock method stored in the variable "clock"
-        while True:
-            print(self.state, self.player)
-            for event in pygame.event.get():
-                mouse = pygame.mouse.get_pos()
-                if event.type == pygame.QUIT:
-                    self.square_sprites = None  # I commented this line out, and the program still shutdown correctly without it. Does it server some other purpose?
-                    return False
-                elif event.type == pygame.KEYDOWN:
-                    if event.key == K_r:
-                        self.square_sprites = None
-                        return True
-                    if event.key == K_m:  # mute sound effects
-                        self.sound_enabled = not self.sound_enabled
-                        if self.sound_enabled:
-                            self.temporary_message("Sound Enabled")
-                        else:
-                            self.temporary_message("Sound Muted")
-
-
-                # Upon user click, see if mouse is in any square. "Select" square where mouse is and "unselect"
-                # previously selected square.
-                if event.type == pygame.MOUSEBUTTONDOWN:
-                    self.handle_click(*mouse)
-
-                # Mouse Hover turns Square Blue (unless square is already selected).
-                for square in self.square_sprites:
-                    if square.contains_point(*mouse):
-                        square.is_hover = True
-                    else:
-                        square.is_hover = False
-
-            # Visuals
-            screen.fill(Color.LIGHT_GREY)
-            self.communication_window(self.message, screen)
-            self.square_sprites.update()
-            pygame.display.update()
-            clock.tick(LOOP_ITERATIONS_PER_SECOND)
 
     def is_capture(self, previous_selection, new_selection):
         # Jumping Up
@@ -164,10 +125,14 @@ class CheckersGame():
             print("False, Illegal!", "new:", new_selection.number, "previous:", previous_selection.number)
             return False
 
-    def make_king(self, new_selection):
-        if new_selection.color == Color.RED and new_selection.number in self.KING_PROMOTION_SQUARES:
-            new_selection.king = True
-            new_selection.can_move
+    def make_king(self, previous_selection):
+        if previous_selection.piece == Color.RED and previous_selection.number in self.KING_PROMOTION_SQUARES:
+            previous_selection.is_king = True
+            print("Congratulations, you're a king!")
+
+        if previous_selection.piece == Color.BROWN and previous_selection.number in self.KING_PROMOTION_SQUARES:
+            previous_selection.is_king = True
+            print("Congratulations, you're a king!")
 
     def handle_click(self, mouse_x, mouse_y):
         for new_selection in self.square_sprites:
@@ -179,6 +144,7 @@ class CheckersGame():
                         if self.is_capture(self.previous_selection, new_selection):
                             self.remove_capture(self.previous_selection, new_selection, self.square_sprites)
                             self.play_sound(self.capture_sound)
+                        self.make_king(new_selection)
                         self.play_sound(self.normal_move_sound)
                         self.state = self.WAITING
                         self.change_players()
@@ -203,3 +169,42 @@ class CheckersGame():
                     self.state = self.PARTIAL_SELECT
                     self.previous_selection = new_selection
                     self.play_sound(self.selection_sound)
+
+    def run(self, screen):
+        clock = pygame.time.Clock()  # clock method stored in the variable "clock"
+        while True:
+            print(self.state, self.player)
+            for event in pygame.event.get():
+                mouse = pygame.mouse.get_pos()
+                if event.type == pygame.QUIT:
+                    self.square_sprites = None  # I commented this line out, and the program still shutdown correctly without it. Does it server some other purpose?
+                    return False
+                elif event.type == pygame.KEYDOWN:
+                    if event.key == K_r:
+                        self.square_sprites = None
+                        return True
+                    if event.key == K_m:  # mute sound effects
+                        self.sound_enabled = not self.sound_enabled
+                        if self.sound_enabled:
+                            self.temporary_message("Sound Enabled")
+                        else:
+                            self.temporary_message("Sound Muted")
+
+                # Upon user click, see if mouse is in any square. "Select" square where mouse is and "unselect"
+                # previously selected square.
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    self.handle_click(*mouse)
+
+                # Mouse Hover turns Square Blue (unless square is already selected).
+                for square in self.square_sprites:
+                    if square.contains_point(*mouse):
+                        square.is_hover = True
+                    else:
+                        square.is_hover = False
+
+            # Visuals
+            screen.fill(Color.LIGHT_GREY)
+            self.communication_window(self.message, screen)
+            self.square_sprites.update()
+            pygame.display.update()
+            clock.tick(LOOP_ITERATIONS_PER_SECOND)
