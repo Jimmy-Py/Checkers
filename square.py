@@ -52,38 +52,5 @@ class Square(pygame.sprite.Sprite):
         if self.piece:
             pygame.draw.ellipse(self.screen, self.piece, self.rect)
 
-    def legal_move(self, new_selection, player, square_sprites):
-        if self.can_move_up:
-            if new_selection.number == self.number - 7 or new_selection.number == self.number - 9:
-                print("True, Legal!", "new:", new_selection.number, "previous:", self.number)
-                return True
-
-            # Jumping
-            elif new_selection.number == self.number - 14 and square_sprites.sprites()[self.number - 7].piece != self.color:
-                return True
-
-            elif new_selection.number == self.number - 18 and square_sprites.sprites()[self.number - 9].piece != self.color:
-                return True
-
-            else:
-                print("False, Illegal!", "new:", new_selection.number, "previous:", self.number)
-                return False
-
-        elif self.can_move_down:
-            if new_selection.number == self.number + 7 or new_selection.number == self.number + 9:
-                print("True, Legal!", "new:", new_selection.number, "previous:", self.number)
-                print(self.number - 7)
-                return True
-
-            elif new_selection.number == self.number + 14 and square_sprites.sprites()[self.number + 7].piece != self.color:
-                return True
-
-            elif new_selection.number == self.number + 18 and square_sprites.sprites()[self.number + 9].piece != self.color:
-                return True
-
-            else:
-                print("False, Illegal!", "new:", new_selection.number, "previous:", self.number)
-                return False
-
     def update(self):
         self.draw()  # am I hover, selected, or original? Am I empty, have BROWN, or RED piece?

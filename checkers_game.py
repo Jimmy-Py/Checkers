@@ -130,11 +130,48 @@ class CheckersGame():
         elif new_selection.number == previous_selection.number + 18:
             square_sprites.sprites()[previous_selection.number + 9].piece = None
 
+    def legal_move(self, previous_selection, new_selection, square_sprites):
+        if previous_selection.can_move_up:
+            if new_selection.number == previous_selection.number - 7 or new_selection.number == previous_selection.number - 9:
+                print("True, Legal!", "new:", new_selection.number, "previous:", previous_selection.number)
+                return True
+
+            # Jumping
+            elif new_selection.number == previous_selection.number - 14 and \
+                    square_sprites.sprites()[previous_selection.number - 7].piece != previous_selection.color:
+                return True
+
+            elif new_selection.number == previous_selection.number - 18 and \
+                    square_sprites.sprites()[previous_selection.number - 9].piece != previous_selection.color:
+                return True
+
+            else:
+                print("False, Illegal!", "new:", new_selection.number, "previous:", previous_selection.number)
+                return False
+
+        elif previous_selection.can_move_down:
+            if new_selection.number == previous_selection.number + 7 or new_selection.number == previous_selection.number + 9:
+                print("True, Legal!", "new:", new_selection.number, "previous:", previous_selection.number)
+                print(previous_selection.number - 7)
+                return True
+
+            elif new_selection.number == previous_selection.number + 14 and \
+                    square_sprites.sprites()[previous_selection.number + 7].piece != previous_selection.color:
+                return True
+
+            elif new_selection.number == previous_selection.number + 18 and \
+                    square_sprites.sprites()[previous_selection.number + 9].piece != previous_selection.color:
+                return True
+
+            else:
+                print("False, Illegal!", "new:", new_selection.number, "previous:", previous_selection.number)
+                return False
+
     def handle_click(self, mouse_x, mouse_y):
         for new_selection in self.square_sprites:
             if new_selection.contains_point(mouse_x, mouse_y):
                 if self.state == self.PARTIAL_SELECT and new_selection.piece is None:  # User selects an open square, in state "Partial Select". # why is this better than " == None" ?
-                    if self.previous_selection.legal_move(new_selection, self.player, self.square_sprites):
+                    if self.legal_move(self.previous_selection, new_selection, self.square_sprites):
                         # Give piece to new square.
                         new_selection.piece = self.player
                         if self.is_capture(self.previous_selection, new_selection):
