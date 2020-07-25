@@ -30,10 +30,14 @@ class Square(pygame.sprite.Sprite):
 
     @property
     def can_move_up(self):
+        if self.is_king:
+            return True
         return self.piece == Color.RED
 
     @property
     def can_move_down(self):
+        if self.is_king:
+            return True
         return self.piece == Color.BROWN
 
     def contains_point(self, x, y):

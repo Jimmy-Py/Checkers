@@ -11,6 +11,7 @@ class CheckersGame():
     WAITING = "Waiting for Player"
     OVER = "Game Over"
     PARTIAL_SELECT = "Partial Select"
+    KING_PROMOTION_SQUARES = [0, 2, 4, 6, 57, 59, 63]
 
     def __init__(self, square_sprites):
         self.sound_enabled = True
@@ -162,6 +163,11 @@ class CheckersGame():
         else:
             print("False, Illegal!", "new:", new_selection.number, "previous:", previous_selection.number)
             return False
+
+    def make_king(self, new_selection):
+        if new_selection.color == Color.RED and new_selection.number in self.KING_PROMOTION_SQUARES:
+            new_selection.king = True
+            new_selection.can_move
 
     def handle_click(self, mouse_x, mouse_y):
         for new_selection in self.square_sprites:
