@@ -146,6 +146,7 @@ class CheckersGame():
                             self.play_sound(self.capture_sound)
                         self.make_king(self.previous_selection, new_selection)
                         new_selection.is_king = self.previous_selection.is_king
+                        self.previous_selection.is_king = False
                         self.play_sound(self.normal_move_sound)
                         self.state = self.WAITING
                         self.change_players()
