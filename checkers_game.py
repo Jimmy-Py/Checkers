@@ -145,11 +145,7 @@ class CheckersGame():
                     square_sprites.sprites()[previous_selection.number - 9].piece != previous_selection.color:
                 return True
 
-            else:
-                print("False, Illegal!", "new:", new_selection.number, "previous:", previous_selection.number)
-                return False
-
-        elif previous_selection.can_move_down:
+        if previous_selection.can_move_down:
             if new_selection.number == previous_selection.number + 7 or new_selection.number == previous_selection.number + 9:
                 print("True, Legal!", "new:", new_selection.number, "previous:", previous_selection.number)
                 print(previous_selection.number - 7)
@@ -163,9 +159,9 @@ class CheckersGame():
                     square_sprites.sprites()[previous_selection.number + 9].piece != previous_selection.color:
                 return True
 
-            else:
-                print("False, Illegal!", "new:", new_selection.number, "previous:", previous_selection.number)
-                return False
+        else:
+            print("False, Illegal!", "new:", new_selection.number, "previous:", previous_selection.number)
+            return False
 
     def handle_click(self, mouse_x, mouse_y):
         for new_selection in self.square_sprites:
