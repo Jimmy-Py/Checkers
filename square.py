@@ -1,6 +1,32 @@
 import pygame
 from constants import Color
 
+class Piece():
+    def __init__(self,color,is_king=False):
+        self.color = color
+        self.is_king = is_king
+
+    @property
+    def is_red(self):
+        return self.color == Color.RED
+
+    @property
+    def is_brown(self):
+        return self.color == Color.BROWN
+
+    def belongs_to(self, player):
+        return self.color == player
+
+    def draw(self, screen, rect):
+        pygame.draw.ellipse(screen, self.color, rect)
+
+        if self.is_king:
+            pygame.draw.line(screen, Color.BLACK,
+                             (rect.centerx, rect.top), (rect.centerx, rect.bottom), 2)
+            pygame.draw.line(screen, Color.BLACK,
+                             (rect.left, rect.centery), (rect.right, rect.centery), 2)
+
+
 
 class Square(pygame.sprite.Sprite):
     SQUARE_COLORS = [Color.WHITE, Color.BLACK]
@@ -15,12 +41,11 @@ class Square(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.x = x
         self.rect.y = y
-        self.color = color # is either black or white (this is the color of the square, not the piece).
+        self.color = color  # is either black or white (this is the color of the square, not the piece).
         self.is_selected = False
         self.number = square_number
         self.is_hover = False
         self.piece = None  # can become either Color.RED or Color.BROWN
-        self.is_king = False
 
     def __str__(self):
         return self.name
@@ -30,15 +55,11 @@ class Square(pygame.sprite.Sprite):
 
     @property
     def can_move_up(self):
-        if self.is_king:
-            return True
-        return self.piece == Color.RED
+        return self.piece and (self.piece.is_king or self.piece.is_red)
 
     @property
     def can_move_down(self):
-        if self.is_king:
-            return True
-        return self.piece == Color.BROWN
+        return self.piece and (self.piece.is_king or self.piece.is_brown)
 
     def contains_point(self, x, y):
         return self.rect.x + Square.SQUARE_SIDE_LENGTH > x > self.rect.x and self.rect.y + Square.SQUARE_SIDE_LENGTH > y > self.rect.y
@@ -54,14 +75,7 @@ class Square(pygame.sprite.Sprite):
             pygame.draw.rect(self.screen, self.color, self.rect)  # square is neither selected nor hovered.
 
         if self.piece:
-            pygame.draw.ellipse(self.screen, self.piece, self.rect)
-
-        if self.is_king:
-            pygame.draw.line(self.screen, Color.BLACK,
-                             (self.rect.centerx, self.rect.top), (self.rect.centerx, self.rect.bottom), 2)
-            pygame.draw.line(self.screen, Color.BLACK,
-                             (self.rect.left, self.rect.centery), (self.rect.right, self.rect.centery), 2)
-
+            self.piece.draw(self.screen, self.rect)
 
     def update(self):
         self.draw()  # am I hover, selected, or original? Am I empty, have BROWN, or RED piece?

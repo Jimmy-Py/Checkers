@@ -2,7 +2,7 @@
 
 import pygame
 from checkers_game import CheckersGame
-from square import Square
+from square import Square, Piece
 from constants import Color
 
 # Global Variables
@@ -40,11 +40,11 @@ def make_squares(screen):
 
     for square in square_sprites:
         if square.number in initial_brown_pieces:
-            square.piece = Color.BROWN
+            square.piece = Piece(Color.BROWN)
 
     for square in square_sprites:
         if square.number in initial_red_pieces:
-            square.piece = Color.RED
+            square.piece = Piece(Color.RED)
 
     return square_sprites
 

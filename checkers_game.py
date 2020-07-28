@@ -126,51 +126,57 @@ class CheckersGame():
             return False
 
     def make_king(self, previous_selection, new_selection):
-        if previous_selection.piece == Color.RED and new_selection.number in self.TOP_KING_PROMOTION_SQUARES:
-            previous_selection.is_king = True
+        if previous_selection.piece.is_red and new_selection.number in self.TOP_KING_PROMOTION_SQUARES:
+            previous_selection.piece.is_king = True
             print("Congratulations, you're a king!")
 
-        if previous_selection.piece == Color.BROWN and new_selection.number in self.BOTTOM_KING_PROMOTION_SQUARES:
-            previous_selection.is_king = True
+        if previous_selection.piece.is_brown and new_selection.number in self.BOTTOM_KING_PROMOTION_SQUARES:
+            previous_selection.piece.is_king = True
             print("Congratulations, you're a king!")
 
     def handle_click(self, mouse_x, mouse_y):
-        for new_selection in self.square_sprites:
-            if new_selection.contains_point(mouse_x, mouse_y):
-                if self.state == self.PARTIAL_SELECT and new_selection.piece is None:  # User selects an open square, in state "Partial Select". # why is this better than " == None" ?
-                    if self.legal_move(self.previous_selection, new_selection, self.square_sprites):
-                        # Give piece to new square.
-                        new_selection.piece = self.player
-                        if self.is_capture(self.previous_selection, new_selection):
-                            self.remove_capture(self.previous_selection, new_selection, self.square_sprites)
-                            self.play_sound(self.capture_sound)
-                        self.make_king(self.previous_selection, new_selection)
-                        new_selection.is_king = self.previous_selection.is_king
-                        self.previous_selection.is_king = False
-                        self.play_sound(self.normal_move_sound)
-                        self.state = self.WAITING
-                        self.change_players()
-                        self.previous_selection.is_selected = False
-                        self.previous_selection.piece = None
-                        self.previous_selection = None
-                        self.play_sound(self.normal_move_sound)
+        new_selection = None
+        for square in self.square_sprites:
+            if square.contains_point(mouse_x, mouse_y):
+                new_selection = square
+                break
 
-                    else:
-                        self.temporary_message("Illegal Move!")
-                        self.play_sound(self.illegal_move_sound)
+        if new_selection:
+            return self._handle_click_square(new_selection)
 
-                # User selects square they have already selected for first choice in "Partial Select"
-                elif self.state == self.PARTIAL_SELECT and new_selection.is_selected:
-                    new_selection.is_selected = False  # unselect original square.
-                    self.state = "Waiting for Player"
-                    self.play_sound(self.unselection_sound)
+    def _handle_click_square(self, new_selection):
+        if self.state == self.PARTIAL_SELECT and new_selection.piece is None:  # User selects an open square, in state "Partial Select". # why is this better than " == None" ?
+            if self.legal_move(self.previous_selection, new_selection, self.square_sprites):
+                # Give piece to new square.
+                new_selection.piece = self.previous_selection.piece
+                if self.is_capture(self.previous_selection, new_selection):
+                    self.remove_capture(self.previous_selection, new_selection, self.square_sprites)
+                    self.play_sound(self.capture_sound)
+                self.make_king(self.previous_selection, new_selection)
+                self.play_sound(self.normal_move_sound)
+                self.state = self.WAITING
+                self.change_players()
+                self.previous_selection.is_selected = False
+                self.previous_selection.piece = None
+                self.previous_selection = None
+                self.play_sound(self.normal_move_sound)
 
-                # State is "Waiting for Player" and player selects a square with a piece (in order to move it).
-                elif new_selection.piece == self.player and self.state == self.WAITING:
-                    new_selection.is_selected = True
-                    self.state = self.PARTIAL_SELECT
-                    self.previous_selection = new_selection
-                    self.play_sound(self.selection_sound)
+            else:
+                self.temporary_message("Illegal Move!")
+                self.play_sound(self.illegal_move_sound)
+
+        # User selects square they have already selected for first choice in "Partial Select"
+        elif self.state == self.PARTIAL_SELECT and new_selection.is_selected:
+            new_selection.is_selected = False  # unselect original square.
+            self.state = "Waiting for Player"
+            self.play_sound(self.unselection_sound)
+
+        # State is "Waiting for Player" and player selects a square with a piece (in order to move it).
+        elif self.state == self.WAITING and new_selection.piece and new_selection.piece.belongs_to(self.player):
+            new_selection.is_selected = True
+            self.state = self.PARTIAL_SELECT
+            self.previous_selection = new_selection
+            self.play_sound(self.selection_sound)
 
     def run(self, screen):
         clock = pygame.time.Clock()  # clock method stored in the variable "clock"
