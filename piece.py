@@ -14,6 +14,14 @@ class Piece():
     def is_brown(self):
         return self.color == Color.BROWN
 
+    @property
+    def can_move_up(self):
+        return self.is_king or self.is_red
+
+    @property
+    def can_move_down(self):
+        return self.is_king or self.is_brown
+
     def belongs_to(self, player):
         return self.color == player
 

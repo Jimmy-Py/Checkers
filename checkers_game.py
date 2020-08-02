@@ -41,7 +41,7 @@ class CheckersGame():
     def accepting_clicks(self):
         return self.state != self.OVER
 
-    def can_move(self, player):
+    def can_movef(self, player):
         return self.player == player  # returns a boolean whether or not a given player can move.
 
     def change_players(self):
@@ -98,7 +98,7 @@ class CheckersGame():
             square_sprites.sprites()[previous_selection.number + 9].piece = None
 
     def legal_move(self, previous_selection, new_selection, square_sprites):
-        if previous_selection.can_move_up:
+        if previous_selection.piece.can_move_up:
             if new_selection.number == previous_selection.number - 7 \
                     or new_selection.number == previous_selection.number - 9:
                 print("True, Legal!", "new:", new_selection.number, "previous:", previous_selection.number)
@@ -113,7 +113,7 @@ class CheckersGame():
                     and square_sprites.sprites()[previous_selection.number - 9].piece.color != previous_selection.piece.color:
                 return True
 
-        if previous_selection.can_move_down:
+        if previous_selection.piece.can_move_down:
             if new_selection.number == previous_selection.number + 7 \
                     or new_selection.number == previous_selection.number + 9:
                 print("True, Legal!", "new:", new_selection.number, "previous:", previous_selection.number)

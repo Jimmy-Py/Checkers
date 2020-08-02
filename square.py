@@ -26,14 +26,6 @@ class Square(pygame.sprite.Sprite):
     def __repr__(self):
         return f"<Square(number={self.number})>"
 
-    @property
-    def can_move_up(self):
-        return self.piece and (self.piece.is_king or self.piece.is_red)
-
-    @property
-    def can_move_down(self):
-        return self.piece and (self.piece.is_king or self.piece.is_brown)
-
     def contains_point(self, x, y):
         return self.rect.x + Square.SQUARE_SIDE_LENGTH > x > self.rect.x and self.rect.y + Square.SQUARE_SIDE_LENGTH > y > self.rect.y
 
