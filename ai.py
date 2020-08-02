@@ -11,14 +11,16 @@ class AI():
             if initial_square.piece:
                 # All Brown Pieces
                 if initial_square.piece.is_brown and initial_square.piece.can_move_down:
-                    if square_sprites.sprites()[initial_square.number + 7].piece is None:
+                    if square_sprites.sprites()[initial_square.number + 7].piece is None \
+                            and square_sprites.sprites()[initial_square.number + 7].color == initial_square.color:
                         self.legal_moves.append([initial_square, square_sprites.sprites()[initial_square.number + 7]])
                         # if/when I make an error here, how am I supposed to catch it?
                         # when I print this list to terminal, why does it square 8 always come up first in the list?
 
                 # Brown Kings
                 if initial_square.piece.is_brown and initial_square.piece.can_move_up:
-                    if square_sprites.sprites[initial_square.number - 7].piece is None:
+                    if square_sprites.sprites[initial_square.number - 7].piece is None \
+                            and square_sprites.sprites()[initial_square.number + 7].color == initial_square.color:
                         self.legal_moves.append([initial_square, square_sprites.sprites()[initial_square.number - 7]])
 
     def ai_move_choice(self):
