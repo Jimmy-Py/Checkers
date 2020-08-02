@@ -224,6 +224,9 @@ class CheckersGame():
                 self.ai.find_legal_moves(self.square_sprites)
                 print(self.ai.legal_moves)
                 initial_square, new_square = self.ai.ai_move_choice()
+                # gives piece from initial to new.
+                new_square.piece = initial_square.piece
+                initial_square.piece = None
 
                 self.play_sound(self.normal_move_sound)
                 self.state = self.WAITING
