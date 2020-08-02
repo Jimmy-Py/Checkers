@@ -62,7 +62,8 @@ class CheckersGame():
         rect = text.get_rect(centerx=(square_length * 12.5)/2, top=y_pos)
         screen.blit(text, rect)
 
-    def is_capture(self, previous_selection, new_selection):
+    @staticmethod
+    def is_capture(previous_selection, new_selection):
         # Jumping Up
         if new_selection.number == previous_selection.number - 14:
             return True

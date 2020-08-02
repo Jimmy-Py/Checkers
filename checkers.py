@@ -2,8 +2,11 @@
 
 import pygame
 from checkers_game import CheckersGame
-from square import Square, Piece
+from square import Square
 from constants import Color
+from piece import Piece
+
+AI_Engaged = True
 
 # Global Variables
 NUMBER_OF_ROWS = 8
