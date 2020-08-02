@@ -1,4 +1,4 @@
-import pygame
+import pygame, random
 from constants import Color
 
 class AI():
@@ -20,4 +20,7 @@ class AI():
                 if initial_square.piece.is_brown and initial_square.piece.can_move_up:
                     if square_sprites.sprites[initial_square.number - 7].piece is None:
                         self.legal_moves.append([initial_square, square_sprites.sprites()[initial_square.number - 7]])
+
+    def ai_move_choice(self):
+        return random.choice(self.legal_moves)
 

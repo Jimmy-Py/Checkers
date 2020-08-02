@@ -223,6 +223,12 @@ class CheckersGame():
             if self.AI_IS_ON and self.player == Color.BROWN: # technically not using State (unless you consider self.player state)
                 self.ai.find_legal_moves(self.square_sprites)
                 print(self.ai.legal_moves)
+                initial_square, new_square = self.ai.ai_move_choice()
+
+                self.play_sound(self.normal_move_sound)
+                self.state = self.WAITING
+                self.change_players()
+                self.play_sound(self.normal_move_sound)
 
 
             # Visuals
