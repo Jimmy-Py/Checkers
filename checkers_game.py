@@ -95,31 +95,36 @@ class CheckersGame():
 
     def legal_move(self, previous_selection, new_selection, square_sprites):
         if previous_selection.can_move_up:
-            if new_selection.number == previous_selection.number - 7 or new_selection.number == previous_selection.number - 9:
+            if new_selection.number == previous_selection.number - 7 \
+                    or new_selection.number == previous_selection.number - 9:
                 print("True, Legal!", "new:", new_selection.number, "previous:", previous_selection.number)
                 return True
 
             # Jumping
-            elif new_selection.number == previous_selection.number - 14 and \
-                    square_sprites.sprites()[previous_selection.number - 7].piece != previous_selection.color:
+            elif new_selection.number == previous_selection.number - 14 \
+                    and square_sprites.sprites()[previous_selection.number - 7].piece.color != previous_selection.piece.color:
                 return True
 
-            elif new_selection.number == previous_selection.number - 18 and \
-                    square_sprites.sprites()[previous_selection.number - 9].piece != previous_selection.color:
+            elif new_selection.number == previous_selection.number - 18 \
+                    and square_sprites.sprites()[previous_selection.number - 9].piece.color != previous_selection.piece.color:
                 return True
 
         if previous_selection.can_move_down:
-            if new_selection.number == previous_selection.number + 7 or new_selection.number == previous_selection.number + 9:
+            if new_selection.number == previous_selection.number + 7 \
+                    or new_selection.number == previous_selection.number + 9:
                 print("True, Legal!", "new:", new_selection.number, "previous:", previous_selection.number)
                 print(previous_selection.number - 7)
                 return True
 
-            elif new_selection.number == previous_selection.number + 14 and \
-                    square_sprites.sprites()[previous_selection.number + 7].piece != previous_selection.color:
+            # Jumping
+            elif new_selection.number == previous_selection.number + 14 \
+                    and square_sprites.sprites()[previous_selection.number + 7].piece.color \
+                    != previous_selection.piece.color:
                 return True
 
-            elif new_selection.number == previous_selection.number + 18 and \
-                    square_sprites.sprites()[previous_selection.number + 9].piece != previous_selection.color:
+            elif new_selection.number == previous_selection.number + 18 \
+                    and square_sprites.sprites()[previous_selection.number + 9].piece.color \
+                    != previous_selection.piece.color:
                 return True
 
         else:
