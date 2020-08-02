@@ -1,6 +1,7 @@
 import pygame
 from pygame.locals import K_r, K_m
 from constants import Color
+from ai import AI
 import sounds
 
 # Local Constants
@@ -29,6 +30,9 @@ class CheckersGame():
         self.previous_selection = None
         self._temporary_message_timer = 0
         self._temporary_message = None
+        self.AI_IS_ON = True
+        if self.AI_IS_ON:
+            self.ai = AI()
 
     def play_sound(self, sound):
         if self.sound_enabled:
@@ -215,6 +219,11 @@ class CheckersGame():
                         square.is_hover = True
                     else:
                         square.is_hover = False
+
+            if self.AI_IS_ON and self.player == Color.BROWN: # technically not using State (unless you consider self.player state)
+                self.ai.find_legal_moves(self.square_sprites)
+                print(self.ai.legal_moves)
+
 
             # Visuals
             screen.fill(Color.LIGHT_GREY)

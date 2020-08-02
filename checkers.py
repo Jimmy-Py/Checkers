@@ -6,8 +6,6 @@ from square import Square
 from constants import Color
 from piece import Piece
 
-AI_Engaged = True
-
 # Global Variables
 NUMBER_OF_ROWS = 8
 NUMBER_OF_COLUMNS = 8
