@@ -1,12 +1,17 @@
-import pygame
+from pathlib import Path
 from pygame.locals import K_r, K_m
+import os
+
+import pygame
+
 from constants import Color
 from ai import AI
-import sounds
 
 # Local Constants
 LOOP_ITERATIONS_PER_SECOND = 5
 
+def sound_path(sound_name):
+    return os.path.join("sounds", sound_name)
 
 class CheckersGame():
     WAITING = "Waiting for Player"
@@ -17,11 +22,11 @@ class CheckersGame():
 
     def __init__(self, square_sprites):
         self.sound_enabled = True
-        self.capture_sound = pygame.mixer.Sound("sounds\\capture.wav")
-        self.unselection_sound = pygame.mixer.Sound("sounds\\unselect.wav")
-        self.selection_sound = pygame.mixer.Sound("sounds\\select.wav")
-        self.normal_move_sound = pygame.mixer.Sound("sounds\\normal_move.wav")
-        self.illegal_move_sound = pygame.mixer.Sound("sounds\\illegal_move.wav")
+        self.capture_sound = pygame.mixer.Sound(sound_path("capture.wav"))
+        self.unselection_sound = pygame.mixer.Sound(sound_path("unselect.wav"))
+        self.selection_sound = pygame.mixer.Sound(sound_path("select.wav"))
+        self.normal_move_sound = pygame.mixer.Sound(sound_path("normal_move.wav"))
+        self.illegal_move_sound = pygame.mixer.Sound(sound_path("illegal_move.wav"))
         self.font = pygame.font.Font("freesansbold.ttf", 20)
         self.state = self.WAITING
         self.player = Color.RED
