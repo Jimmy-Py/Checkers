@@ -26,6 +26,28 @@ class Square(pygame.sprite.Sprite):
     def __repr__(self):
         return f"<Square(number={self.number})>"
 
+    @property
+    def column(self):
+        return self.number % 8 # remainder in division by 8
+
+    @property
+    def row(self):
+        return self.number // 8
+
+    @property
+    def possible_moves(self):
+        all_possible = [
+            (2,   2),
+            (1,   1),
+            (2,  -2),
+            (1,  -1),
+            (-1,  1),
+            (-2,  2),
+            (-1, -1),
+            (-2, -2),
+        ]
+        return [x for x in all_possible if 0 <= x[0] + self.column < 8 and 0 <= x[1] + self.row < 8]
+
     def contains_point(self, x, y):
         return self.rect.x + Square.SQUARE_SIDE_LENGTH > x > self.rect.x and self.rect.y + Square.SQUARE_SIDE_LENGTH > y > self.rect.y
 
