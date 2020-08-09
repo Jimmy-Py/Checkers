@@ -28,7 +28,7 @@ class Square(pygame.sprite.Sprite):
 
     @property
     def column(self):
-        return self.number % 8 # remainder in division by 8
+        return self.number % 8  # remainder in division by 8
 
     @property
     def row(self):

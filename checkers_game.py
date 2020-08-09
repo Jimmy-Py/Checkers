@@ -35,7 +35,7 @@ class CheckersGame():
         self.previous_selection = None
         self._temporary_message_timer = 0
         self._temporary_message = None
-        self.AI_IS_ON = True
+        self.AI_IS_ON = False
         if self.AI_IS_ON:
             self.ai = AI()
 
@@ -103,42 +103,53 @@ class CheckersGame():
             square_sprites.sprites()[previous_selection.number + 9].piece = None
 
     def legal_move(self, previous_selection, new_selection, square_sprites):
-        if previous_selection.piece.can_move_up:
-            if new_selection.number == previous_selection.number - 7 \
-                    or new_selection.number == previous_selection.number - 9:
-                print("True, Legal!", "new:", new_selection.number, "previous:", previous_selection.number)
+        proposed_move = (new_selection.column - previous_selection.column, new_selection.row - previous_selection.row)
+        print(proposed_move)
+        print(previous_selection.possible_moves)
+        if proposed_move in previous_selection.possible_moves:
+            if proposed_move[1] < 0 and previous_selection.piece.can_move_up:
+                print("your move is legal :)")
+                return True
+            if proposed_move[1] > 0 and previous_selection.piece.can_move_down:
+                print("your move is legal :)")
                 return True
 
-            # Jumping
-            elif new_selection.number == previous_selection.number - 14 \
-                    and square_sprites.sprites()[previous_selection.number - 7].piece.color != previous_selection.piece.color:
-                return True
-
-            elif new_selection.number == previous_selection.number - 18 \
-                    and square_sprites.sprites()[previous_selection.number - 9].piece.color != previous_selection.piece.color:
-                return True
-
-        if previous_selection.piece.can_move_down:
-            if new_selection.number == previous_selection.number + 7 \
-                    or new_selection.number == previous_selection.number + 9:
-                print("True, Legal!", "new:", new_selection.number, "previous:", previous_selection.number)
-                print(previous_selection.number - 7)
-                return True
-
-            # Jumping
-            elif new_selection.number == previous_selection.number + 14 \
-                    and square_sprites.sprites()[previous_selection.number + 7].piece.color \
-                    != previous_selection.piece.color:
-                return True
-
-            elif new_selection.number == previous_selection.number + 18 \
-                    and square_sprites.sprites()[previous_selection.number + 9].piece.color \
-                    != previous_selection.piece.color:
-                return True
-
-        else:
-            print("False, Illegal!", "new:", new_selection.number, "previous:", previous_selection.number)
-            return False
+        # if previous_selection.piece.can_move_up:
+        #     if new_selection.number == previous_selection.number - 7 \
+        #             or new_selection.number == previous_selection.number - 9:
+        #         print("True, Legal!", "new:", new_selection.number, "previous:", previous_selection.number)
+        #         return True
+        #
+        #     # Jumping
+        #     elif new_selection.number == previous_selection.number - 14 \
+        #             and square_sprites.sprites()[previous_selection.number - 7].piece.color != previous_selection.piece.color:
+        #         return True
+        #
+        #     elif new_selection.number == previous_selection.number - 18 \
+        #             and square_sprites.sprites()[previous_selection.number - 9].piece.color != previous_selection.piece.color:
+        #         return True
+        #
+        # if previous_selection.piece.can_move_down:
+        #     if new_selection.number == previous_selection.number + 7 \
+        #             or new_selection.number == previous_selection.number + 9:
+        #         print("True, Legal!", "new:", new_selection.number, "previous:", previous_selection.number)
+        #         print(previous_selection.number - 7)
+        #         return True
+        #
+        #     # Jumping
+        #     elif new_selection.number == previous_selection.number + 14 \
+        #             and square_sprites.sprites()[previous_selection.number + 7].piece.color \
+        #             != previous_selection.piece.color:
+        #         return True
+        #
+        #     elif new_selection.number == previous_selection.number + 18 \
+        #             and square_sprites.sprites()[previous_selection.number + 9].piece.color \
+        #             != previous_selection.piece.color:
+        #         return True
+        #
+        # else:
+        #     print("False, Illegal!", "new:", new_selection.number, "previous:", previous_selection.number)
+        #     return False
 
     def make_king(self, previous_selection, new_selection):
         if previous_selection.piece.is_red and new_selection.number in self.TOP_KING_PROMOTION_SQUARES:
