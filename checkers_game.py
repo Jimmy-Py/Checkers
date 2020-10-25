@@ -20,13 +20,21 @@ class CheckersGame():
     TOP_KING_PROMOTION_SQUARES = [1, 3, 5, 7]
     BOTTOM_KING_PROMOTION_SQUARES = [56, 58, 60, 62]
 
+    SOUNDS = {
+        "capture": "capture.wav",
+        "unselection": "unselect.wav",
+        "selection": "select.wav",
+        "normal_move": "normal_move.wav",
+        "illegal_move": "illegal_mov.wav",
+    }
     def __init__(self, square_sprites):
-        self.sound_enabled = True
-        self.capture_sound = pygame.mixer.Sound(sound_path("capture.wav"))
-        self.unselection_sound = pygame.mixer.Sound(sound_path("unselect.wav"))
-        self.selection_sound = pygame.mixer.Sound(sound_path("select.wav"))
-        self.normal_move_sound = pygame.mixer.Sound(sound_path("normal_move.wav"))
-        self.illegal_move_sound = pygame.mixer.Sound(sound_path("illegal_move.wav"))
+        self.sounds = {}
+        try:
+            self._load_sounds()
+            self.sound_enabled = True
+        except pygame.error:
+            self.sound_enabled = False
+            print("skipping sound")
         self.font = pygame.font.Font("freesansbold.ttf", 20)
         self.state = self.WAITING
         self.player = Color.RED
@@ -39,9 +47,13 @@ class CheckersGame():
         if self.AI_IS_ON:
             self.ai = AI()
 
+    def _load_sounds(self):
+        for sound_name, sound_file in self.SOUNDS.items():
+            self.sounds[sound_name] = pygame.mixer.Sound(sound_path(sound_file))
+
     def play_sound(self, sound):
-        if self.sound_enabled:
-            pygame.mixer.Sound.play(sound)  # the sounds variables are found in the init() of the class.
+        if self.sound_enabled and sound in self.sounds:
+            pygame.mixer.Sound.play(self.sounds[sound])  # the sounds variables are found in the init() of the class.
 
     def accepting_clicks(self):
         return self.state != self.OVER
@@ -177,32 +189,32 @@ class CheckersGame():
                 new_selection.piece = self.previous_selection.piece
                 if self.is_capture(self.previous_selection, new_selection):
                     self.remove_capture(self.previous_selection, new_selection, self.square_sprites)
-                    self.play_sound(self.capture_sound)
+                    self.play_sound("capture")
                 self.make_king(self.previous_selection, new_selection)
-                self.play_sound(self.normal_move_sound)
+                self.play_sound("normal_move")
                 self.state = self.WAITING
                 self.change_players()
                 self.previous_selection.is_selected = False
                 self.previous_selection.piece = None
                 self.previous_selection = None
-                self.play_sound(self.normal_move_sound)
+                self.play_sound("normal_move")
 
             else:
                 self.temporary_message("Illegal Move!")
-                self.play_sound(self.illegal_move_sound)
+                self.play_sound("illegal_move")
 
         # User selects square they have already selected for first choice in "Partial Select"
         elif self.state == self.PARTIAL_SELECT and new_selection.is_selected:
             new_selection.is_selected = False  # unselect original square.
             self.state = "Waiting for Player"
-            self.play_sound(self.unselection_sound)
+            self.play_sound("unselection")
 
         # State is "Waiting for Player" and player selects a square with a piece (in order to move it).
         elif self.state == self.WAITING and new_selection.piece and new_selection.piece.belongs_to(self.player):
             new_selection.is_selected = True
             self.state = self.PARTIAL_SELECT
             self.previous_selection = new_selection
-            self.play_sound(self.selection_sound)
+            self.play_sound("selection")
 
     def run(self, screen):
         clock = pygame.time.Clock()  # clock method stored in the variable "clock"
@@ -244,10 +256,10 @@ class CheckersGame():
                 new_square.piece = initial_square.piece
                 initial_square.piece = None
 
-                self.play_sound(self.normal_move_sound)
+                self.play_sound("normal_move")
                 self.state = self.WAITING
                 self.change_players()
-                self.play_sound(self.normal_move_sound)
+                self.play_sound("normal_move")
 
 
             # Visuals
