@@ -44,7 +44,7 @@ class Square(pygame.sprite.Sprite):
     def row(self):
         return self.number // 8
 
-    def possible_moves(self, squares, captures_only=False):
+    def possible_moves(self, board, captures_only=False):
         possible_moves = [
             (2,   2),
             (2,  -2),
@@ -65,13 +65,14 @@ class Square(pygame.sprite.Sprite):
               or (self.piece.can_move_up and x[1] < 0 )
         ]
         return [m for m in moves_for_my_piece
-                if not is_jump(m) or self.can_perform_jump(m, squares)]
+                if not is_jump(m) or self.can_perform_jump(m, board)]
 
-    def can_perform_jump(self, move_tuple, squares):
-        jumped_square = squares[
-            self.column + get_jumped_move(move_tuple)[0]
-            + 8 * (self.row + get_jumped_move(move_tuple)[1])
-        ]
+    def can_perform_jump(self, move_tuple, board):
+        jumped_move = get_jumped_move(move_tuple)
+        jumped_square = board.square_at(
+            column=self.column + jumped_move[0],
+            row=self.row + jumped_move[1],
+        )
         print("trying to perform jump with ", jumped_square.number, move_tuple)
         return self.piece != jumped_square.piece
 
