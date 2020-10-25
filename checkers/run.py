@@ -2,10 +2,11 @@
 
 import pygame
 
-from .game import CheckersGame
-from .square import Square
 from .constants import Color
+from .game import CheckersGame
 from .piece import Piece
+from .sound_machine import SoundMachine
+from .square import Square
 
 # Global Variables
 NUMBER_OF_ROWS = 8
@@ -54,14 +55,13 @@ def make_squares(screen):
 def main():
     # General Setup
     pygame.init()
-    pygame.mixer.init()
-
+    sound_machine = SoundMachine()
     # Setting up the main window
     screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))  # returns a display-surface object
     pygame.display.set_caption("Checkers!")
 
     squares = make_squares(screen)
-    game = CheckersGame(squares)
+    game = CheckersGame(squares, sound_machine)
     should_restart = game.run(screen)
     pygame.quit()
     if should_restart:
