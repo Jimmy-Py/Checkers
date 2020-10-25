@@ -4,8 +4,8 @@ import os
 
 import pygame
 
-from constants import Color
-from ai import AI
+from .constants import Color
+from .ai import AI
 
 # Local Constants
 LOOP_ITERATIONS_PER_SECOND = 5
@@ -35,7 +35,8 @@ class CheckersGame():
         try:
             self._load_sounds()
             self.sound_enabled = True
-        except pygame.error:
+        except pygame.error as e:
+            print(e)
             self.sound_enabled = False
             print("skipping sound")
         self.font = pygame.font.Font("freesansbold.ttf", 20)

@@ -1,5 +1,6 @@
 import pygame
-from constants import Color
+
+from .constants import Color
 
 
 def is_jump(move_tuple):

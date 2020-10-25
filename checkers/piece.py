@@ -1,5 +1,6 @@
 import pygame
-from constants import Color
+
+from .constants import Color
 
 class Piece():
     def __init__(self, color, is_king=False):
