@@ -1,10 +1,11 @@
 # 6-2-20 Checkers project, Jimmy B, overseen by Ray B.
 
 import pygame
-from checkers_game import CheckersGame
-from square import Square
-from constants import Color
-from piece import Piece
+
+from .game import CheckersGame
+from .square import Square
+from .constants import Color
+from .piece import Piece
 
 # Global Variables
 NUMBER_OF_ROWS = 8
@@ -53,6 +54,7 @@ def make_squares(screen):
 def main():
     # General Setup
     pygame.init()
+    pygame.mixer.init()
 
     # Setting up the main window
     screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))  # returns a display-surface object

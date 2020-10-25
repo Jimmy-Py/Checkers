@@ -7,4 +7,3 @@ class Color():
     BROWN = (139, 69, 19)
     BLUE_DARK = (0, 0, 255)
     GREEN = (0, 255, 0)
-

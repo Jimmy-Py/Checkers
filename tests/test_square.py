@@ -2,9 +2,9 @@ from unittest.mock import Mock
 
 import pytest
 
-from square import Square
-from piece import Piece
-from constants import Color
+from checkers.square import Square
+from checkers.piece import Piece
+from checkers.constants import Color
 
 
 @pytest.fixture

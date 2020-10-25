@@ -1,1 +1,1 @@
-python3 checkers.py
+python3 -m checkers.run

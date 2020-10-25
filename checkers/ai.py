@@ -1,5 +1,8 @@
-import pygame, random
-from constants import Color
+import random
+
+import pygame
+
+from .constants import Color
 
 class AI():
     def __init__(self):
