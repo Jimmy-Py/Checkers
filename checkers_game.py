@@ -10,8 +10,10 @@ from ai import AI
 # Local Constants
 LOOP_ITERATIONS_PER_SECOND = 5
 
+
 def sound_path(sound_name):
     return os.path.join("sounds", sound_name)
+
 
 class CheckersGame():
     WAITING = "Waiting for Player"
@@ -27,6 +29,7 @@ class CheckersGame():
         "normal_move": "normal_move.wav",
         "illegal_move": "illegal_mov.wav",
     }
+
     def __init__(self, square_sprites):
         self.sounds = {}
         try:
@@ -115,53 +118,14 @@ class CheckersGame():
             square_sprites.sprites()[previous_selection.number + 9].piece = None
 
     def legal_move(self, previous_selection, new_selection, square_sprites):
-        proposed_move = (new_selection.column - previous_selection.column, new_selection.row - previous_selection.row)
+        proposed_move = (
+            new_selection.column - previous_selection.column,
+            new_selection.row - previous_selection.row,
+        )
         print(proposed_move)
-        print(previous_selection.possible_moves)
-        if proposed_move in previous_selection.possible_moves:
-            if proposed_move[1] < 0 and previous_selection.piece.can_move_up:
-                print("your move is legal :)")
-                return True
-            if proposed_move[1] > 0 and previous_selection.piece.can_move_down:
-                print("your move is legal :)")
-                return True
-
-        # if previous_selection.piece.can_move_up:
-        #     if new_selection.number == previous_selection.number - 7 \
-        #             or new_selection.number == previous_selection.number - 9:
-        #         print("True, Legal!", "new:", new_selection.number, "previous:", previous_selection.number)
-        #         return True
-        #
-        #     # Jumping
-        #     elif new_selection.number == previous_selection.number - 14 \
-        #             and square_sprites.sprites()[previous_selection.number - 7].piece.color != previous_selection.piece.color:
-        #         return True
-        #
-        #     elif new_selection.number == previous_selection.number - 18 \
-        #             and square_sprites.sprites()[previous_selection.number - 9].piece.color != previous_selection.piece.color:
-        #         return True
-        #
-        # if previous_selection.piece.can_move_down:
-        #     if new_selection.number == previous_selection.number + 7 \
-        #             or new_selection.number == previous_selection.number + 9:
-        #         print("True, Legal!", "new:", new_selection.number, "previous:", previous_selection.number)
-        #         print(previous_selection.number - 7)
-        #         return True
-        #
-        #     # Jumping
-        #     elif new_selection.number == previous_selection.number + 14 \
-        #             and square_sprites.sprites()[previous_selection.number + 7].piece.color \
-        #             != previous_selection.piece.color:
-        #         return True
-        #
-        #     elif new_selection.number == previous_selection.number + 18 \
-        #             and square_sprites.sprites()[previous_selection.number + 9].piece.color \
-        #             != previous_selection.piece.color:
-        #         return True
-        #
-        # else:
-        #     print("False, Illegal!", "new:", new_selection.number, "previous:", previous_selection.number)
-        #     return False
+        possible_moves = previous_selection.possible_moves()
+        print(possible_moves)
+        return proposed_move in possible_moves
 
     def make_king(self, previous_selection, new_selection):
         if previous_selection.piece.is_red and new_selection.number in self.TOP_KING_PROMOTION_SQUARES:
@@ -186,14 +150,17 @@ class CheckersGame():
         if self.state == self.PARTIAL_SELECT and new_selection.piece is None:  # User selects an open square, in state "Partial Select". # why is this better than " == None" ?
             if self.legal_move(self.previous_selection, new_selection, self.square_sprites):
                 # Give piece to new square.
+                player_goes_again = False
                 new_selection.piece = self.previous_selection.piece
                 if self.is_capture(self.previous_selection, new_selection):
                     self.remove_capture(self.previous_selection, new_selection, self.square_sprites)
                     self.play_sound("capture")
+                    if new_selection.possible_moves(captures_only=True):
+                        player_goes_again = True
                 self.make_king(self.previous_selection, new_selection)
-                self.play_sound("normal_move")
                 self.state = self.WAITING
-                self.change_players()
+                if not player_goes_again:
+                    self.change_players()
                 self.previous_selection.is_selected = False
                 self.previous_selection.piece = None
                 self.previous_selection = None

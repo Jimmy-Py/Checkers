@@ -34,8 +34,7 @@ class Square(pygame.sprite.Sprite):
     def row(self):
         return self.number // 8
 
-    @property
-    def possible_moves(self):
+    def possible_moves(self, captures_only=False):
         all_possible = [
             (2,   2),
             (1,   1),
@@ -46,7 +45,19 @@ class Square(pygame.sprite.Sprite):
             (-1, -1),
             (-2, -2),
         ]
-        return [x for x in all_possible if 0 <= x[0] + self.column < 8 and 0 <= x[1] + self.row < 8]
+        if captures_only:
+            all_possible = [m for m in all_possible if abs(m[0]) == 2 or abs(m[1]) == 2]
+
+        return [
+            x
+            for x in all_possible
+            if 0 <= x[0] + self.column < 8  # you stay on the horizontal
+               and 0 <= x[1] + self.row < 8  # you stay on the vertical
+               and (
+                   (self.piece.can_move_down and x[1] > 0)
+                    or (self.piece.can_move_up and x[1] < 0 )
+               )
+        ]
 
     def contains_point(self, x, y):
         return self.rect.x + Square.SQUARE_SIDE_LENGTH > x > self.rect.x and self.rect.y + Square.SQUARE_SIDE_LENGTH > y > self.rect.y
