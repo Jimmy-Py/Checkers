@@ -87,7 +87,7 @@ class CheckersGame():
         screen.blit(text, rect)
 
     @staticmethod
-    def is_capture(previous_selection, new_selection):
+    def is_jump(previous_selection, new_selection):
         # Jumping Up
         if new_selection.number == previous_selection.number - 14:
             return True
@@ -102,28 +102,28 @@ class CheckersGame():
         elif new_selection.number == previous_selection.number + 18:
             return True
 
-    def remove_capture(self, previous_selection, new_selection, square_sprites):
+    def remove_capture(self, previous_selection, new_selection):
         # Jumping Up
         if new_selection.number == previous_selection.number - 14:
-            square_sprites.sprites()[previous_selection.number - 7].piece = None
+            self.square_sprites.sprites()[previous_selection.number - 7].piece = None
 
         elif new_selection.number == previous_selection.number - 18:
-            square_sprites.sprites()[previous_selection.number - 9].piece = None
+            self.square_sprites.sprites()[previous_selection.number - 9].piece = None
 
         # Jumping Down
         elif new_selection.number == previous_selection.number + 14:
-            square_sprites.sprites()[previous_selection.number + 7].piece = None
+            self.square_sprites.sprites()[previous_selection.number + 7].piece = None
 
         elif new_selection.number == previous_selection.number + 18:
-            square_sprites.sprites()[previous_selection.number + 9].piece = None
+            self.square_sprites.sprites()[previous_selection.number + 9].piece = None
 
-    def legal_move(self, previous_selection, new_selection, square_sprites):
+    def legal_move(self, previous_selection, new_selection):
         proposed_move = (
             new_selection.column - previous_selection.column,
             new_selection.row - previous_selection.row,
         )
         print(proposed_move)
-        possible_moves = previous_selection.possible_moves()
+        possible_moves = previous_selection.possible_moves(self.square_sprites.sprites())
         print(possible_moves)
         return proposed_move in possible_moves
 
@@ -148,14 +148,14 @@ class CheckersGame():
 
     def _handle_click_square(self, new_selection):
         if self.state == self.PARTIAL_SELECT and new_selection.piece is None:  # User selects an open square, in state "Partial Select". # why is this better than " == None" ?
-            if self.legal_move(self.previous_selection, new_selection, self.square_sprites):
+            if self.legal_move(self.previous_selection, new_selection):
                 # Give piece to new square.
                 player_goes_again = False
                 new_selection.piece = self.previous_selection.piece
-                if self.is_capture(self.previous_selection, new_selection):
-                    self.remove_capture(self.previous_selection, new_selection, self.square_sprites)
+                if self.is_jump(self.previous_selection, new_selection):
+                    self.remove_capture(self.previous_selection, new_selection)
                     self.play_sound("capture")
-                    if new_selection.possible_moves(captures_only=True):
+                    if new_selection.possible_moves(self.square_sprites.sprites(), captures_only=True):
                         player_goes_again = True
                 self.make_king(self.previous_selection, new_selection)
                 self.state = self.WAITING
