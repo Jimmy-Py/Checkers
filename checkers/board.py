@@ -13,10 +13,10 @@ class Board:
     DEFAULT_SCREEN_WIDTH = Square.SQUARE_SIDE_LENGTH * NUMBER_OF_COLUMNS + 2 * HORIZONTAL_BUFFER
     DEFAULT_SCREEN_HEIGHT = Square.SQUARE_SIDE_LENGTH * NUMBER_OF_ROWS + 2 * VERTICAL_BUFFER + 100
 
-    def __init__(self, screen=None):
+    def __init__(self, screen=None, empty=False):
         self.screen = screen or pygame.display.set_mode((self.DEFAULT_SCREEN_WIDTH, self.DEFAULT_SCREEN_HEIGHT))
         self.square_sprites = pygame.sprite.Group()
-        self._load_sprites()
+        self._load_sprites(empty)
         self.squares = self.square_sprites.sprites()
 
     def update(self):
@@ -25,32 +25,19 @@ class Board:
     def square_at(self, column, row):
         return self.squares[column+row*8]
 
-    def _load_sprites(self):
+    def _load_sprites(self, empty):
         # Start drawing at the edge of the buffer space
-        x, y = self.HORIZONTAL_BUFFER, self.VERTICAL_BUFFER
-        column_counter = 0
-        color_counter = 0
-        for square_number in range(0, 64):
-            if color_counter % 2 != 0:  # color_counter is odd
-                c = 1  # make next square black.
-            else:
-                c = 0  # make next square white.
-            self.square_sprites.add(Square(Square.SQUARE_COLORS[c], x, y, square_number, screen=self.screen))
-            x += Square.SQUARE_SIDE_LENGTH
-            column_counter += 1
+        for row in range(8):
+            x = self.HORIZONTAL_BUFFER
+            y = row * Square.SQUARE_SIDE_LENGTH
 
-            if column_counter >= self.NUMBER_OF_COLUMNS:
-                x = self.HORIZONTAL_BUFFER
-                y += Square.SQUARE_SIDE_LENGTH
-                column_counter = 0
-                continue
-            color_counter += 1  # make next square a different color
+            for column in range(8):
+                self.square_sprites.add(Square(x, y, column=column, row=row, screen=self.screen))
+                x += Square.SQUARE_SIDE_LENGTH
 
-        initial_brown_pieces = [1, 3, 5, 7, 8, 12, 10, 14, 17, 19, 21, 23]
-        initial_red_pieces = [40, 42, 44, 46, 49, 51, 53, 55, 56, 58, 60, 62]
-
-        for square in self.square_sprites:
-            if square.number in initial_brown_pieces:
-                square.piece = Piece(Color.BROWN)
-            if square.number in initial_red_pieces:
-                square.piece = Piece(Color.RED)
+        if not empty:
+            for square in [s for s in self.square_sprites if s.color == Color.BLACK]:
+                if square.row < 3:
+                    square.piece = Piece(Color.BROWN)
+                elif square.row > 4:
+                    square.piece = Piece(Color.RED)
