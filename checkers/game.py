@@ -4,8 +4,9 @@ import os
 
 import pygame
 
-from .constants import Color
 from .ai import AI
+from .constants import Color
+from .square import Square
 
 # Local Constants
 LOOP_ITERATIONS_PER_SECOND = 5
@@ -18,9 +19,9 @@ class CheckersGame():
     TOP_KING_PROMOTION_SQUARES = [1, 3, 5, 7]
     BOTTOM_KING_PROMOTION_SQUARES = [56, 58, 60, 62]
 
-    def __init__(self, square_sprites, sound_machine=None):
+    def __init__(self, board, sound_machine=None):
+        self.board = board
         self.sound_machine = sound_machine
-        self.square_sprites = square_sprites
 
         self.font = pygame.font.Font("freesansbold.ttf", 20)
         self.state = self.WAITING
@@ -57,15 +58,15 @@ class CheckersGame():
         self._temporary_message = message
         self._temporary_message_timer = 4
 
-    def communication_window(self, message, screen):
+    def communication_window(self, message):
         if self._temporary_message_timer > 0:
             message = self._temporary_message
             self._temporary_message_timer -= 1
-        square_length = self.square_sprites.sprites()[0].SQUARE_SIDE_LENGTH
+        square_length = Square.SQUARE_SIDE_LENGTH
         y_pos = square_length * 8 + 50
         text = self.font.render(message, True, Color.BLACK, Color.WHITE)
         rect = text.get_rect(centerx=(square_length * 12.5)/2, top=y_pos)
-        screen.blit(text, rect)
+        self.board.screen.blit(text, rect)
 
     @staticmethod
     def is_jump(previous_selection, new_selection):
@@ -86,17 +87,17 @@ class CheckersGame():
     def remove_capture(self, previous_selection, new_selection):
         # Jumping Up
         if new_selection.number == previous_selection.number - 14:
-            self.square_sprites.sprites()[previous_selection.number - 7].piece = None
+            self.board.squares[previous_selection.number - 7].piece = None
 
         elif new_selection.number == previous_selection.number - 18:
-            self.square_sprites.sprites()[previous_selection.number - 9].piece = None
+            self.board.squares[previous_selection.number - 9].piece = None
 
         # Jumping Down
         elif new_selection.number == previous_selection.number + 14:
-            self.square_sprites.sprites()[previous_selection.number + 7].piece = None
+            self.board.squares[previous_selection.number + 7].piece = None
 
         elif new_selection.number == previous_selection.number + 18:
-            self.square_sprites.sprites()[previous_selection.number + 9].piece = None
+            self.board.squares[previous_selection.number + 9].piece = None
 
     def legal_move(self, previous_selection, new_selection):
         proposed_move = (
@@ -104,7 +105,7 @@ class CheckersGame():
             new_selection.row - previous_selection.row,
         )
         print(proposed_move)
-        possible_moves = previous_selection.possible_moves(self.square_sprites.sprites())
+        possible_moves = previous_selection.possible_moves(self.board)
         print(possible_moves)
         return proposed_move in possible_moves
 
@@ -119,7 +120,7 @@ class CheckersGame():
 
     def handle_click(self, mouse_x, mouse_y):
         new_selection = None
-        for square in self.square_sprites:
+        for square in self.board.square_sprites:
             if square.contains_point(mouse_x, mouse_y):
                 new_selection = square
                 break
@@ -136,7 +137,7 @@ class CheckersGame():
                 if self.is_jump(self.previous_selection, new_selection):
                     self.remove_capture(self.previous_selection, new_selection)
                     self.play_sound("capture")
-                    if new_selection.possible_moves(self.square_sprites.sprites(), captures_only=True):
+                    if new_selection.possible_moves(self.board, captures_only=True):
                         player_goes_again = True
                 self.make_king(self.previous_selection, new_selection)
                 self.state = self.WAITING
@@ -164,18 +165,19 @@ class CheckersGame():
             self.previous_selection = new_selection
             self.play_sound("selection")
 
-    def run(self, screen):
+    def run(self):
         clock = pygame.time.Clock()  # clock method stored in the variable "clock"
+        pygame.display.set_caption("Checkers!")
         while True:
             print(self.state, self.player)
             for event in pygame.event.get():
                 mouse = pygame.mouse.get_pos()
                 if event.type == pygame.QUIT:
-                    self.square_sprites = None  # I commented this line out, and the program still shutdown correctly without it. Does it server some other purpose?
+                    self.board = None  # I commented this line out, and the program still shutdown correctly without it. Does it server some other purpose?
                     return False
                 elif event.type == pygame.KEYDOWN:
                     if event.key == K_r:
-                        self.square_sprites = None
+                        self.board = None
                         return True
                     if event.key == K_m and self.sound_machine:  # mute sound effects
                         if self.sound_machine.toggle_mute():
@@ -189,14 +191,14 @@ class CheckersGame():
                     self.handle_click(*mouse)
 
                 # Mouse Hover turns Square Blue (unless square is already selected).
-                for square in self.square_sprites:
+                for square in self.board.square_sprites:
                     if square.contains_point(*mouse):
                         square.is_hover = True
                     else:
                         square.is_hover = False
 
             if self.AI_IS_ON and self.player == Color.BROWN: # technically not using State (unless you consider self.player state)
-                self.ai.find_legal_moves(self.square_sprites)
+                self.ai.find_legal_moves(self.board)
                 print(self.ai.legal_moves)
                 initial_square, new_square = self.ai.ai_move_choice()
                 # gives piece from initial to new.
@@ -210,8 +212,8 @@ class CheckersGame():
 
 
             # Visuals
-            screen.fill(Color.LIGHT_GREY)
-            self.communication_window(self.message, screen)
-            self.square_sprites.update()
+            self.board.screen.fill(Color.LIGHT_GREY)
+            self.communication_window(self.message)
+            self.board.update()
             pygame.display.update()
             clock.tick(LOOP_ITERATIONS_PER_SECOND)
