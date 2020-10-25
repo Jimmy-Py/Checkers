@@ -11,10 +11,6 @@ from .ai import AI
 LOOP_ITERATIONS_PER_SECOND = 5
 
 
-def sound_path(sound_name):
-    return os.path.join("sounds", sound_name)
-
-
 class CheckersGame():
     WAITING = "Waiting for Player"
     OVER = "Game Over"
@@ -22,28 +18,14 @@ class CheckersGame():
     TOP_KING_PROMOTION_SQUARES = [1, 3, 5, 7]
     BOTTOM_KING_PROMOTION_SQUARES = [56, 58, 60, 62]
 
-    SOUNDS = {
-        "capture": "capture.wav",
-        "unselection": "unselect.wav",
-        "selection": "select.wav",
-        "normal_move": "normal_move.wav",
-        "illegal_move": "illegal_mov.wav",
-    }
+    def __init__(self, square_sprites, sound_machine=None):
+        self.sound_machine = sound_machine
+        self.square_sprites = square_sprites
 
-    def __init__(self, square_sprites):
-        self.sounds = {}
-        try:
-            self._load_sounds()
-            self.sound_enabled = True
-        except pygame.error as e:
-            print(e)
-            self.sound_enabled = False
-            print("skipping sound")
         self.font = pygame.font.Font("freesansbold.ttf", 20)
         self.state = self.WAITING
         self.player = Color.RED
         self.message = "Red's Turn"
-        self.square_sprites = square_sprites
         self.previous_selection = None
         self._temporary_message_timer = 0
         self._temporary_message = None
@@ -51,13 +33,11 @@ class CheckersGame():
         if self.AI_IS_ON:
             self.ai = AI()
 
-    def _load_sounds(self):
-        for sound_name, sound_file in self.SOUNDS.items():
-            self.sounds[sound_name] = pygame.mixer.Sound(sound_path(sound_file))
-
     def play_sound(self, sound):
-        if self.sound_enabled and sound in self.sounds:
-            pygame.mixer.Sound.play(self.sounds[sound])  # the sounds variables are found in the init() of the class.
+        if self.sound_machine:
+            self.sound_machine.play(sound)
+        else:
+            print("skipping", sound, "sound")
 
     def accepting_clicks(self):
         return self.state != self.OVER
@@ -197,12 +177,11 @@ class CheckersGame():
                     if event.key == K_r:
                         self.square_sprites = None
                         return True
-                    if event.key == K_m:  # mute sound effects
-                        self.sound_enabled = not self.sound_enabled
-                        if self.sound_enabled:
-                            self.temporary_message("Sound Enabled")
-                        else:
+                    if event.key == K_m and self.sound_machine:  # mute sound effects
+                        if self.sound_machine.toggle_mute():
                             self.temporary_message("Sound Muted")
+                        else:
+                            self.temporary_message("Sound Enabled")
 
                 # Upon user click, see if mouse is in any square. "Select" square where mouse is and "unselect"
                 # previously selected square.
