@@ -1,5 +1,6 @@
 from pathlib import Path
 from pygame.locals import K_r, K_m
+import logging
 import os
 
 import pygame
@@ -38,7 +39,7 @@ class CheckersGame():
         if self.sound_machine:
             self.sound_machine.play(sound)
         else:
-            print("skipping", sound, "sound")
+            logging.warn("skipping", sound, "sound")
 
     def accepting_clicks(self):
         return self.state != self.OVER
@@ -104,19 +105,19 @@ class CheckersGame():
             new_selection.column - previous_selection.column,
             new_selection.row - previous_selection.row,
         )
-        print(proposed_move)
+        logging.info("Calculating proposed move from %s with %s", previous_selection, proposed_move)
         possible_moves = previous_selection.possible_moves(self.board)
-        print(possible_moves)
+        logging.debug("All possible moves: %s", possible_moves)
         return proposed_move in possible_moves
 
     def make_king(self, previous_selection, new_selection):
         if previous_selection.piece.is_red and new_selection.number in self.TOP_KING_PROMOTION_SQUARES:
             previous_selection.piece.is_king = True
-            print("Congratulations, you're a king!")
+            logging.info("Congratulations, you're a king!")
 
         if previous_selection.piece.is_brown and new_selection.number in self.BOTTOM_KING_PROMOTION_SQUARES:
             previous_selection.piece.is_king = True
-            print("Congratulations, you're a king!")
+            logging.info("Congratulations, you're a king!")
 
     def handle_click(self, mouse_x, mouse_y):
         new_selection = None
@@ -169,7 +170,7 @@ class CheckersGame():
         clock = pygame.time.Clock()  # clock method stored in the variable "clock"
         pygame.display.set_caption("Checkers!")
         while True:
-            print(self.state, self.player)
+            logging.debug("Current State %s - Player %s", self.state, self.player)
             for event in pygame.event.get():
                 mouse = pygame.mouse.get_pos()
                 if event.type == pygame.QUIT:
@@ -199,7 +200,7 @@ class CheckersGame():
 
             if self.AI_IS_ON and self.player == Color.BROWN: # technically not using State (unless you consider self.player state)
                 self.ai.find_legal_moves(self.board)
-                print(self.ai.legal_moves)
+                logging.debug(self.ai.legal_moves)
                 initial_square, new_square = self.ai.ai_move_choice()
                 # gives piece from initial to new.
                 new_square.piece = initial_square.piece

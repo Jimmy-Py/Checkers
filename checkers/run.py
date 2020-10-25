@@ -1,4 +1,6 @@
 # 6-2-20 Checkers project, Jimmy B, overseen by Ray B.
+import logging
+import sys
 
 import pygame
 
@@ -6,10 +8,10 @@ from .board import Board
 from .game import CheckersGame
 from .sound_machine import SoundMachine
 
-# Global Variables
 
 def main():
     # General Setup
+    logging.basicConfig(stream=sys.stdout, level=logging.INFO)
     pygame.init()
     sound_machine = SoundMachine()
 
@@ -19,7 +21,8 @@ def main():
     pygame.quit()
     if should_restart:
         return "Restart"
-    print(should_restart)
+    should_restart = False
+    logging.info("Game ended with 'should_restart' set to %s", should_restart)
 
 
 if __name__ == "__main__":

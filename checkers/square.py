@@ -30,9 +30,6 @@ class Square(pygame.sprite.Sprite):
         self.is_hover = False
         self.piece = None  # can become either Color.RED or Color.BROWN
 
-    def __str__(self):
-        return self.name
-
     def __repr__(self):
         return f"<Square(number={self.number})>"
 
@@ -73,7 +70,6 @@ class Square(pygame.sprite.Sprite):
             column=self.column + jumped_move[0],
             row=self.row + jumped_move[1],
         )
-        print("trying to perform jump with ", jumped_square.number, move_tuple)
         return self.piece != jumped_square.piece
 
 
