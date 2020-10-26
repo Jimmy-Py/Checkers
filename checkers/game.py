@@ -106,7 +106,7 @@ class CheckersGame():
             new_selection.row - previous_selection.row,
         )
         logging.info("Calculating proposed move from %s with %s", previous_selection, proposed_move)
-        possible_moves = previous_selection.possible_moves(self.board)
+        possible_moves = previous_selection.possible_moves()
         logging.debug("All possible moves: %s", possible_moves)
         return proposed_move in possible_moves
 
@@ -138,7 +138,7 @@ class CheckersGame():
                 if self.is_jump(self.previous_selection, new_selection):
                     self.remove_capture(self.previous_selection, new_selection)
                     self.play_sound("capture")
-                    if new_selection.possible_moves(self.board, captures_only=True):
+                    if new_selection.possible_moves(captures_only=True):
                         player_goes_again = True
                 self.make_king(self.previous_selection, new_selection)
                 self.state = self.WAITING
