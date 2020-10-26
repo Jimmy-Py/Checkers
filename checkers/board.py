@@ -32,7 +32,7 @@ class Board:
             y = row * Square.SQUARE_SIDE_LENGTH
 
             for column in range(8):
-                self.square_sprites.add(Square(x, y, column=column, row=row, screen=self.screen))
+                self.square_sprites.add(Square(x, y, column=column, row=row, board=self))
                 x += Square.SQUARE_SIDE_LENGTH
 
         if not empty:

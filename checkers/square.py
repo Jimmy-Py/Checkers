@@ -16,9 +16,9 @@ class Square(pygame.sprite.Sprite):
     NUMBERS = ["1", "2", "3", "4", "5", "6", "7", "8"]
     SQUARE_SIDE_LENGTH = 50
 
-    def __init__(self, x, y, column, row, screen=None):
+    def __init__(self, x, y, column, row, board=None):
         super().__init__()
-        self.screen = screen
+        self.board = board
         self.image = pygame.Surface((self.SQUARE_SIDE_LENGTH, self.SQUARE_SIDE_LENGTH))
         self.rect = self.image.get_rect()
         self.rect.x = x
@@ -37,7 +37,7 @@ class Square(pygame.sprite.Sprite):
     def number(self):
         return self.column + self.row*8
 
-    def possible_moves(self, board, captures_only=False):
+    def possible_moves(self, captures_only=False):
         possible_moves = [
             (2,   2),
             (2,  -2),
@@ -58,11 +58,11 @@ class Square(pygame.sprite.Sprite):
               or (self.piece.can_move_up and x[1] < 0 )
         ]
         return [m for m in moves_for_my_piece
-                if not is_jump(m) or self.can_perform_jump(m, board)]
+                if not is_jump(m) or self.can_perform_jump(m)]
 
-    def can_perform_jump(self, move_tuple, board):
+    def can_perform_jump(self, move_tuple):
         jumped_move = get_jumped_move(move_tuple)
-        jumped_square = board.square_at(
+        jumped_square = self.board.square_at(
             column=self.column + jumped_move[0],
             row=self.row + jumped_move[1],
         )
@@ -74,16 +74,16 @@ class Square(pygame.sprite.Sprite):
 
     def draw(self):
         if self.is_selected:
-            pygame.draw.rect(self.screen, Color.GREEN, self.rect)  # make square green (selected).
+            pygame.draw.rect(self.board.screen, Color.GREEN, self.rect)  # make square green (selected).
 
         elif self.is_hover:
-            pygame.draw.rect(self.screen, Color.BLUE_DARK, self.rect)  # make square blue (hovered).
+            pygame.draw.rect(self.board.screen, Color.BLUE_DARK, self.rect)  # make square blue (hovered).
 
         else:
-            pygame.draw.rect(self.screen, self.color, self.rect)  # square is neither selected nor hovered.
+            pygame.draw.rect(self.board.screen, self.color, self.rect)  # square is neither selected nor hovered.
 
         if self.piece:
-            self.piece.draw(self.screen, self.rect)
+            self.piece.draw(self.board.screen, self.rect)
 
     def update(self):
         self.draw()  # am I hover, selected, or original? Am I empty, have BROWN, or RED piece?
