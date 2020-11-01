@@ -20,7 +20,10 @@ def main():
         sound_machine = None
     board = Board()
     game = CheckersGame(board, sound_machine)
-    should_restart = game.run()
+    try:
+        should_restart = game.run()
+    except KeyboardInterrupt:
+        should_restart = False
     pygame.quit()
     if should_restart:
         return "Restart"
