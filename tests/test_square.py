@@ -5,7 +5,7 @@ import pytest
 from checkers.board import Board
 from checkers.constants import Color
 from checkers.piece import Piece
-from checkers.square import Square
+from checkers.square import Square, Move
 
 
 @pytest.fixture
@@ -70,3 +70,21 @@ def test_knows_legal_moves_in_center_for_red(red_piece, fake_board):
         (1, -1),
         (-1, -1),
     ]
+
+def test_handles_jump_condition(brown_piece, red_piece, fake_board):
+    """
+        . . . . .
+        . . B . .
+        . R . . .
+        . . . . .
+    """
+    red_square = fake_board.square_at(column=1, row=2)
+    red_square.piece = red_piece
+
+    brown_square = fake_board.square_at(column=2,row=1)
+    brown_square.piece = brown_piece
+
+    assert set(red_square.possible_moves()) == set([
+        Move(column_delta=2, row_delta=-2),
+        Move(column_delta=-1, row_delta=-1),
+    ])
