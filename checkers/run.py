@@ -13,8 +13,11 @@ def main():
     # General Setup
     logging.basicConfig(stream=sys.stdout, level=logging.INFO)
     pygame.init()
-    sound_machine = SoundMachine()
-
+    try:
+        sound_machine = SoundMachine()
+    except pygame.error as e:
+        logging.error("Failed to load SoundMachine (%s); skipping sound", str(e))
+        sound_machine = None
     board = Board()
     game = CheckersGame(board, sound_machine)
     should_restart = game.run()
