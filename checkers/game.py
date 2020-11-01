@@ -7,7 +7,7 @@ import pygame
 
 from .ai import AI
 from .constants import Color
-from .square import Square
+from .square import Square, Move, is_jump, get_jumped_move
 
 # Local Constants
 LOOP_ITERATIONS_PER_SECOND = 5
@@ -17,8 +17,8 @@ class CheckersGame():
     WAITING = "Waiting for Player"
     OVER = "Game Over"
     PARTIAL_SELECT = "Partial Select"
-    TOP_KING_PROMOTION_SQUARES = [1, 3, 5, 7]
-    BOTTOM_KING_PROMOTION_SQUARES = [56, 58, 60, 62]
+    TOP_PROMOTION_ROW = 0
+    BOTTOM_PROMOTION_ROW = 7
 
     def __init__(self, board, sound_machine=None):
         self.board = board
@@ -69,53 +69,16 @@ class CheckersGame():
         rect = text.get_rect(centerx=(square_length * 12.5)/2, top=y_pos)
         self.board.screen.blit(text, rect)
 
-    @staticmethod
-    def is_jump(previous_selection, new_selection):
-        # Jumping Up
-        if new_selection.number == previous_selection.number - 14:
-            return True
-
-        elif new_selection.number == previous_selection.number - 18:
-            return True
-
-        # Jumping Down
-        elif new_selection.number == previous_selection.number + 14:
-            return True
-
-        elif new_selection.number == previous_selection.number + 18:
-            return True
-
-    def remove_capture(self, previous_selection, new_selection):
-        # Jumping Up
-        if new_selection.number == previous_selection.number - 14:
-            self.board.squares[previous_selection.number - 7].piece = None
-
-        elif new_selection.number == previous_selection.number - 18:
-            self.board.squares[previous_selection.number - 9].piece = None
-
-        # Jumping Down
-        elif new_selection.number == previous_selection.number + 14:
-            self.board.squares[previous_selection.number + 7].piece = None
-
-        elif new_selection.number == previous_selection.number + 18:
-            self.board.squares[previous_selection.number + 9].piece = None
-
-    def legal_move(self, previous_selection, new_selection):
-        proposed_move = (
-            new_selection.column - previous_selection.column,
-            new_selection.row - previous_selection.row,
-        )
-        logging.info("Calculating proposed move from %s with %s", previous_selection, proposed_move)
-        possible_moves = previous_selection.possible_moves()
-        logging.debug("All possible moves: %s", possible_moves)
-        return proposed_move in possible_moves
+    def remove_capture(self, previous_selection, move):
+        intermediate_square = previous_selection.other_square_from_move(get_jumped_move(move))
+        intermediate_square.piece = None
 
     def make_king(self, previous_selection, new_selection):
-        if previous_selection.piece.is_red and new_selection.number in self.TOP_KING_PROMOTION_SQUARES:
+        if previous_selection.piece.is_red and new_selection.row == self.TOP_PROMOTION_ROW:
             previous_selection.piece.is_king = True
             logging.info("Congratulations, you're a king!")
 
-        if previous_selection.piece.is_brown and new_selection.number in self.BOTTOM_KING_PROMOTION_SQUARES:
+        if previous_selection.piece.is_brown and new_selection.row == self.BOTTOM_PROMOTION_ROW:
             previous_selection.piece.is_king = True
             logging.info("Congratulations, you're a king!")
 
@@ -131,12 +94,16 @@ class CheckersGame():
 
     def _handle_click_square(self, new_selection):
         if self.state == self.PARTIAL_SELECT and new_selection.piece is None:  # User selects an open square, in state "Partial Select". # why is this better than " == None" ?
-            if self.legal_move(self.previous_selection, new_selection):
+            proposed_move = Move(
+                column_delta=new_selection.column - self.previous_selection.column,
+                row_delta=new_selection.row - self.previous_selection.row,
+            )
+            if proposed_move in self.previous_selection.possible_moves():
                 # Give piece to new square.
                 player_goes_again = False
                 new_selection.piece = self.previous_selection.piece
-                if self.is_jump(self.previous_selection, new_selection):
-                    self.remove_capture(self.previous_selection, new_selection)
+                if is_jump(proposed_move):
+                    self.remove_capture(self.previous_selection, proposed_move)
                     self.play_sound("capture")
                     if new_selection.possible_moves(captures_only=True):
                         player_goes_again = True
@@ -167,9 +134,11 @@ class CheckersGame():
             self.play_sound("selection")
 
     def run(self):
+        # Setup
         clock = pygame.time.Clock()  # clock method stored in the variable "clock"
         pygame.display.set_caption("Checkers!")
         while True:
+            # Handle events
             logging.debug("Current State %s - Player %s", self.state, self.player)
             for event in pygame.event.get():
                 mouse = pygame.mouse.get_pos()
@@ -186,8 +155,7 @@ class CheckersGame():
                         else:
                             self.temporary_message("Sound Enabled")
 
-                # Upon user click, see if mouse is in any square. "Select" square where mouse is and "unselect"
-                # previously selected square.
+                ##  !!!! THIS IS WHERE THE REAL GAME LOGIC STARTS !!!!!!
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     self.handle_click(*mouse)
 
