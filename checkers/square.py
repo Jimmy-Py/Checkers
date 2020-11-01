@@ -11,7 +11,10 @@ def is_jump(move_tuple):
 def get_jumped_move(move_tuple):
     """Take a move tuple (e.g. 2, 2) and return the jumped equivalent for that move (e.g. 1, 1)"""
     assert set(abs(x) for x in move_tuple) == set([2]), f"tried to calculate jump on {move_tuple}"
-    return Move((1 if move_tuple.column_delta == 2 else -1), (1 if move_tuple.row_delta == 2 else -1))
+    return Move(
+        column_delta=(1 if move_tuple.column_delta == 2 else -1),
+        row_delta=(1 if move_tuple.row_delta == 2 else -1)
+    )
 
 class Square(pygame.sprite.Sprite):
     COLUMNS = ["a", "b", "c", "d", "e", "f", "g", "h"]
@@ -67,10 +70,12 @@ class Square(pygame.sprite.Sprite):
     def can_enter(self, move):
         return self.other_square_from_move(move).piece is None
 
-    def can_perform_jump(self, move_tuple):
-        jumped_move = get_jumped_move(move_tuple)
+    def can_perform_jump(self, jump_move_tuple):
+        """ returns true, when there is an opposing piece diagonally
+        adjacent to you in the direction of the jump"""
+        jumped_move = get_jumped_move(jump_move_tuple) # turn -2, 2 into -1, 1
         jumped_square = self.other_square_from_move(jumped_move)
-        return self.piece != jumped_square.piece
+        return jumped_square.piece is not None and self.piece != jumped_square.piece
 
     def other_square_from_move(self, move):
         return self.board.square_at(
