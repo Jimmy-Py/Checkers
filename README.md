@@ -6,7 +6,7 @@ in square.py, and everything will shrink or expand accordingly.
 
 # Installing
 
-To setup your environment `script/setup`
+To setup your environment execute `script/setup`
 
 # Running
 
